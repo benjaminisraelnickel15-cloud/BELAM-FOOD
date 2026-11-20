@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BELAM FOOD — Riz LOSO YA KILO, Farine de maïs & Usinage à Kisangani</title>
+  <style>
+    :root {
+      --bleu-profond: #081c3a;
+      --bleu-royal: #123b7a;
+      --bleu-clair: #eef3fa;
+      --or-cuivre: #c88a2b;
+      --or-clair: #f7ecd7;
+      --blanc: #ffffff;
+      --texte: #142338;
+      --texte-doux: #54647c;
+      --bordure: #d6e0ee;
+      --succes: #157347;
+      --alerte: #996400;
+      --rayon: 12px;
+      --ombre: 0 10px 28px rgba(8, 28, 58, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--blanc);
+      color: var(--texte);
+      line-height: 1.55;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header.site-header {
+      background: var(--bleu-profond);
+      color: var(--blanc);
+      border-bottom: 3px solid var(--or-cuivre);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 74px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--blanc);
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      background: var(--bleu-royal);
+      border: 2px solid var(--or-cuivre);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #f3be68;
+    }
+
+    .brand-text strong {
+      display: block;
+      font-size: 1.15rem;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-text span {
+      font-size: 0.78rem;
+      color: #c8d7ec;
+    }
+
+    nav.main-nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    nav.main-nav a {
+      color: #e4edf9;
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: color 0.15s;
+    }
+
+    nav.main-nav a:hover {
+      color: #f3be68;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.12s, background 0.15s, opacity 0.15s;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--or-cuivre);
+      color: var(--blanc);
+    }
+
+    .btn-primary:hover {
+      background: #b17720;
+    }
+
+    .btn-secondary {
+      background: var(--bleu-royal);
+      color: var(--blanc);
+    }
+
+    .btn-outline-light {
+      background: transparent;
+      color: var(--blanc);
+      border: 1.5px solid rgba(255, 255, 255, 0.45);
+    }
+
+    .btn-outline-light:hover {
+      border-color: #f3be68;
+      color: #f3be68;
+    }
+
+    .btn-sm {
+      padding: 7px 12px;
+      font-size: 0.84rem;
+    }
+
+    .hero {
+      background: linear-gradient(125deg, var(--bleu-profond) 0%, var(--bleu-royal) 65%, #194d99 100%);
+      color: var(--blanc);
+      padding: 64px 0;
+      border-bottom: 4px solid var(--or-cuivre);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.9fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(200, 138, 43, 0.22);
+      border: 1px solid var(--or-cuivre);
+      color: #f6c776;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-size: 2.3rem;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .hero p {
+      font-size: 1.02rem;
+      color: #dce7f7;
+      margin-bottom: 24px;
+      max-width: 620px;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero-panel {
+      background: rgba(8, 28, 58, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: var(--rayon);
+      padding: 22px;
+    }
+
+    .hero-panel h3 {
+      font-size: 1rem;
+      color: #f6c776;
+      margin-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      padding-bottom: 8px;
+    }
+
+    .hero-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+      font-size: 0.92rem;
+    }
+
+    .hero-stat:last-child {
+      border-bottom: none;
+    }
+
+    .hero-stat strong {
+      color: #ffffff;
+      font-size: 1rem;
+    }
+
+    section.page-section {
+      padding: 56px 0;
+    }
+
+    section.alt-bg {
+      background: var(--bleu-clair);
+    }
+
+    .section-head {
+      margin-bottom: 28px;
+    }
+
+    .section-head h2 {
+      font-size: 1.65rem;
+      color: var(--bleu-profond);
+      margin-bottom: 6px;
+    }
+
+    .section-head p {
+      color: var(--texte-doux);
+      font-size: 0.98rem;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .product-card {
+      background: var(--blanc);
+      border: 1px solid var(--bordure);
+      border-radius: var(--rayon);
+      padding: 22px;
+      box-shadow: var(--ombre);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .badge-ok {
+      background: #e3f6ec;
+      color: var(--succes);
+    }
+
+    .badge-soon {
+      background: var(--or-clair);
+      color: var(--alerte);
+    }
+
+    .product-card h3 {
+      font-size: 1.2rem;
+      color: var(--bleu-profond);
+      margin-bottom: 6px;
+    }
+
+    .product-card p {
+      font-size: 0.9rem;
+      color: var(--texte-doux);
+      margin-bottom: 12px;
+    }
+
+    .format-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      background: var(--bleu-clair);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    .format-row strong {
+      color: var(--bleu-royal);
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+
+    .service-card {
+      background: var(--blanc);
+      border: 1px solid var(--bordure);
+      border-top: 4px solid var(--bleu-royal);
+      border-radius: var(--rayon);
+      padding: 24px;
+      box-shadow: var(--ombre);
+    }
+
+    .service-card.gold-top {
+      border-top-color: var(--or-cuivre);
+    }
+
+    .service-card h3 {
+      color: var(--bleu-profond);
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+    .service-card p {
+      color: var(--texte-doux);
+      font-size: 0.92rem;
+      margin-bottom: 14px;
+    }
+
+    .service-list {
+      list-style: none;
+      margin-bottom: 18px;
+      font-size: 0.9rem;
+    }
+
+    .service-list li {
+      padding: 5px 0;
+      border-bottom: 1px solid #edf2f8;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .info-box {
+      background: var(--blanc);
+      border: 1px solid var(--bordure);
+      border-radius: var(--rayon);
+      padding: 24px;
+      box-shadow: var(--ombre);
+    }
+
+    .info-box h3 {
+      color: var(--bleu-profond);
+      margin-bottom: 12px;
+      font-size: 1.15rem;
+    }
+
+    .info-line {
+      margin-bottom: 10px;
+      font-size: 0.94rem;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    footer.site-footer {
+      background: var(--bleu-profond);
+      color: #c8d7ec;
+      padding: 28px 0;
+      font-size: 0.88rem;
+      border-top: 3px solid var(--or-cuivre);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .footer-links a {
+      color: #f3be68;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 28, 58, 0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 200;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--blanc);
+      border-radius: var(--rayon);
+      max-width: 520px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      box-shadow: var(--ombre);
+      border-top: 4px solid var(--or-cuivre);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--bordure);
+    }
+
+    .modal-head h3 {
+      color: var(--bleu-profond);
+      font-size: 1.15rem;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      font-size: 1.35rem;
+      cursor: pointer;
+      color: var(--texte-doux);
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--bleu-profond);
+      margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #c3d0e3;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.94rem;
+      color: var(--texte);
+      background: var(--blanc);
+    }
+
+    .order-summary {
+      background: var(--bleu-clair);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      font-size: 0.92rem;
+    }
+
+    .confirmation-box {
+      display: none;
+      background: #e9f7ef;
+      border: 1px solid #b7e4c7;
+      color: var(--succes);
+      padding: 14px;
+      border-radius: 8px;
+      margin-top: 12px;
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 960px) {
+      .hero-grid,
+      .products-grid,
+      .services-grid,
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 1.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#accueil" class="brand">
+        <div class="brand-mark">BF</div>
+        <div class="brand-text">
+          <strong>BELAM FOOD</strong>
+          <span>Rizerie • Moulin • Négoce • Kisangani</span>
+        </div>
+      </a>
+
+      <nav class="main-nav">
+        <a href="#produits">Produits</a>
+        <a href="#services">Usinage & Partenariat Riz</a>
+        <a href="#contact">Contact & Accès</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="https://wa.me/243977579321" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light btn-sm">WhatsApp</a>
+        <a href="https://www.facebook.com/profile.php?id=61596753746341" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light btn-sm">Facebook</a>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openOrderModal()">Commander</button>
+        <a href="admin.html" class="btn btn-secondary btn-sm">Administration</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" id="accueil">
+    <div class="container hero-grid">
+      <div>
+        <span class="hero-tag">Plateforme officielle — Kisangani, RDC</span>
+        <h1>Riz LOSO YA KILO, farine de maïs et services d'usinage de qualité</h1>
+        <p>
+          BELAM FOOD accompagne les ménages, revendeurs, dépôts et producteurs agricoles à Kisangani :
+          vente de sacs de 25 kg et 50 kg, usinage de vos récoltes et achat de riz fini.
+        </p>
+        <div class="hero-cta">
+          <button type="button" class="btn btn-primary" onclick="openOrderModal()">Commander maintenant</button>
+          <a href="https://wa.me/243977579321" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Écrire sur WhatsApp</a>
+          <a href="https://www.facebook.com/profile.php?id=61596753746341" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light">Page Facebook</a>
+        </div>
+      </div>
+
+      <div class="hero-panel">
+        <h3>Disponibilité & Services</h3>
+        <div class="hero-stat">
+          <span>Riz LOSO YA KILO</span>
+          <strong id="heroRizStatus">Disponible (25 kg & 50 kg)</strong>
+        </div>
+        <div class="hero-stat">
+          <span>Farine de maïs</span>
+          <strong id="heroMaisStatus">Disponible (25 kg & 50 kg)</strong>
+        </div>
+        <div class="hero-stat">
+          <span>Farine de manioc</span>
+          <strong id="heroManiocStatus">Bientôt disponible</strong>
+        </div>
+        <div class="hero-stat">
+          <span>Livraison à Kisangani</span>
+          <strong id="heroLivraisonStatus">Gratuite</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-section" id="produits">
+    <div class="container">
+      <div class="section-head">
+        <h2>Nos produits alimentaires</h2>
+        <p>Conditionnements adaptés à la consommation familiale et à la revente en gros ou demi-gros.</p>
+      </div>
+
+      <div class="products-grid">
+        <article class="product-card">
+          <div>
+            <span class="badge badge-ok">Disponible</span>
+            <h3>Riz LOSO YA KILO</h3>
+            <p>Riz usiné et conditionné avec soin pour une cuisson régulière et un excellent rendement.</p>
+            <div class="format-row">
+              <span>Sac de 25 kg</span>
+              <strong id="priceRiz25">75 000 FC</strong>
+            </div>
+            <div class="format-row">
+              <span>Sac de 50 kg</span>
+              <strong id="priceRiz50">150 000 FC</strong>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="openOrderModal('LOSO YA KILO', 25)">Commander ce produit</button>
+        </article>
+
+        <article class="product-card">
+          <div>
+            <span class="badge badge-ok">Disponible</span>
+            <h3>Farine de maïs</h3>
+            <p>Farine de maïs moulue sur place, idéale pour le fufu / bukari et les préparations quotidiennes.</p>
+            <div class="format-row">
+              <span>Sac de 25 kg</span>
+              <strong id="priceMais25">60 000 FC</strong>
+            </div>
+            <div class="format-row">
+              <span>Sac de 50 kg</span>
+              <strong id="priceMais50">120 000 FC</strong>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="openOrderModal('Farine de maïs', 25)">Commander ce produit</button>
+        </article>
+
+        <article class="product-card">
+          <div>
+            <span class="badge badge-soon" id="badgeManioc">Bientôt disponible</span>
+            <h3>Farine de manioc</h3>
+            <p>Préparation en cours pour vous proposer prochainement une farine de manioc de qualité constante.</p>
+            <div class="format-row">
+              <span>Formats prévus</span>
+              <strong>25 kg & 50 kg</strong>
+            </div>
+            <div class="format-row">
+              <span>Disponibilité</span>
+              <strong id="textManiocDispo">Prochainement</strong>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="openOrderModal('Farine de manioc (alerte dispo)', 25)">Être informé / Pré-commander</button>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-section alt-bg" id="services">
+    <div class="container">
+      <div class="section-head">
+        <h2>Services d'usinage & achat de riz</h2>
+        <p>Des solutions transparentes pour transformer vos récoltes ou écouler votre riz fini.</p>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <h3>Usinage de vos produits (Riz & Maïs)</h3>
+          <p>Apportez votre paddy ou votre maïs à l'usine pour un usinage propre et un suivi clair.</p>
+          <ul class="service-list">
+            <li>• Traitement séparé : votre récolte reste la vôtre</li>
+            <li>• Pesée et suivi transparent des quantités obtenues</li>
+            <li>• Retrait à l'usine après règlement des frais d'usinage</li>
+          </ul>
+          <button type="button" class="btn btn-secondary" onclick="openServiceModal('Usinage')">Demander un usinage</button>
+        </div>
+
+        <div class="service-card gold-top">
+          <h3>Vente de votre riz fini à BELAM FOOD</h3>
+          <p>Vous produisez ou collectez du riz fini ? Nous achetons votre riz avec possibilité d'avance.</p>
+          <ul class="service-list">
+            <li>• Tarif de référence actuel : <strong id="refAchatRiz">2 500 FC / kg</strong></li>
+            <li>• Possibilité d'avance accordée avant livraison</li>
+            <li>• Déduction automatique des avances lors du règlement</li>
+          </ul>
+          <button type="button" class="btn btn-primary" onclick="openServiceModal('Vente de riz à BELAM FOOD')">Proposer du riz / Demander une avance</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-section" id="contact">
+    <div class="container">
+      <div class="section-head">
+        <h2>Contact & Localisation à Kisangani</h2>
+        <p>Retrouvez BELAM FOOD sur place ou contactez directement notre équipe.</p>
+      </div>
+
+      <div class="contact-grid">
+        <div class="info-box">
+          <h3>Coordonnées BELAM FOOD</h3>
+          <div class="info-line"><strong>Adresse :</strong> Av. Mongala, Plateau Boyoma, Commune de Makiso, Kisangani</div>
+          <div class="info-line"><strong>Téléphone / WhatsApp :</strong> <span id="contactTel">+243 977 579 321</span></div>
+          <div class="info-line"><strong>Horaires :</strong> Lundi – Samedi, 08h00 – 18h00</div>
+          <div class="social-links">
+            <a href="https://wa.me/243977579321" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">Discuter sur WhatsApp</a>
+            <a href="https://www.facebook.com/profile.php?id=61596753746341" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">Voir la page Facebook</a>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <h3>Accès rapide</h3>
+          <p style="color: var(--texte-doux); font-size: 0.92rem; margin-bottom: 16px;">
+            Passez votre commande en ligne en quelques secondes ou accédez à l'espace de gestion interne.
+          </p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" class="btn btn-primary" onclick="openOrderModal()">Passer une commande</button>
+            <a href="admin.html" class="btn btn-secondary">Ouvrir l'administration</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>© <span id="yearSpan">2026</span> BELAM FOOD — Tous droits réservés.</div>
+      <div class="footer-links">
+        <a href="https://www.facebook.com/profile.php?id=61596753746341" target="_blank" rel="noopener noreferrer">Facebook</a>
+        <a href="https://wa.me/243977579321" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        <a href="admin.html">Administration</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODALE COMMANDE -->
+  <div class="modal-backdrop" id="orderModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>Commander un produit</h3>
+        <button type="button" class="modal-close" onclick="closeModal('orderModal')">✕</button>
+      </div>
+      <form id="orderForm">
+        <div class="form-group">
+          <label for="ordProduct">Produit</label>
+          <select id="ordProduct">
+            <option value="LOSO YA KILO">Riz LOSO YA KILO</option>
+            <option value="Farine de maïs">Farine de maïs</option>
+            <option value="Farine de manioc (alerte dispo)">Farine de manioc (alerte dispo)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="ordFormat">Format du sac</label>
+          <select id="ordFormat">
+            <option value="25">Sac de 25 kg</option>
+            <option value="50">Sac de 50 kg</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="ordQty">Nombre de sacs</label>
+          <input type="number" id="ordQty" min="1" value="1" required />
+        </div>
+        <div class="form-group">
+          <label for="ordDelivery">Mode de réception</label>
+          <select id="ordDelivery">
+            <option value="Livraison Kisangani">Livraison à Kisangani</option>
+            <option value="Retrait à l'usine">Retrait à l'usine (Av. Mongala, Makiso)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="ordName">Votre nom complet</label>
+          <input type="text" id="ordName" required placeholder="Ex. Jean Kasongo" />
+        </div>
+        <div class="form-group">
+          <label for="ordPhone">Téléphone / WhatsApp</label>
+          <input type="tel" id="ordPhone" required placeholder="Ex. +243 970 000 000" />
+        </div>
+        <div class="form-group">
+          <label for="ordAddress">Adresse / Quartier (si livraison)</label>
+          <input type="text" id="ordAddress" placeholder="Ex. Plateau Boyoma, Makiso" />
+        </div>
+
+        <div class="order-summary" id="orderSummary">
+          Total estimé : <strong>75 000 FC</strong>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer la commande</button>
+        <div class="confirmation-box" id="orderConfirmation"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODALE SERVICE (USINAGE / VENTE DE RIZ) -->
+  <div class="modal-backdrop" id="serviceModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="serviceModalTitle">Demande de service</h3>
+        <button type="button" class="modal-close" onclick="closeModal('serviceModal')">✕</button>
+      </div>
+      <form id="serviceForm">
+        <input type="hidden" id="srvType" />
+        <div class="form-group">
+          <label for="srvName">Votre nom complet / coopérative</label>
+          <input type="text" id="srvName" required placeholder="Nom complet" />
+        </div>
+        <div class="form-group">
+          <label for="srvPhone">Téléphone / WhatsApp</label>
+          <input type="tel" id="srvPhone" required placeholder="+243 ..." />
+        </div>
+        <div class="form-group">
+          <label for="srvWeight">Quantité estimée (kg)</label>
+          <input type="number" id="srvWeight" min="1" value="250" required />
+        </div>
+        <div class="form-group">
+          <label for="srvNotes">Précisions (produit, date souhaitée, avance éventuelle...)</label>
+          <textarea id="srvNotes" rows="3" placeholder="Décrivez votre besoin..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-secondary" style="width: 100%;">Envoyer la demande</button>
+        <div class="confirmation-box" id="serviceConfirmation"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "belam_food_admin_v2";
+    const defaultParams = {
+      riz_25: 75000,
+      riz_50: 150000,
+      mais_25: 60000,
+      mais_50: 120000,
+      achat_riz_kg: 2500,
+      manioc_statut: "bientot_disponible",
+      telephone: "+243 977 579 321",
+      livraison: "gratuite",
+    };
+
+    function getAdminState() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function getParams() {
+      const st = getAdminState();
+      return { ...defaultParams, ...(st && st.parametres ? st.parametres : {}) };
+    }
+
+    const formatFC = (n) => new Intl.NumberFormat("fr-FR").format(Math.round(Number(n || 0))) + " FC";
+
+    function applyPublicParams() {
+      const p = getParams();
+      document.getElementById("priceRiz25").textContent = formatFC(p.riz_25);
+      document.getElementById("priceRiz50").textContent = formatFC(p.riz_50);
+      document.getElementById("priceMais25").textContent = formatFC(p.mais_25);
+      document.getElementById("priceMais50").textContent = formatFC(p.mais_50);
+      document.getElementById("refAchatRiz").textContent = formatFC(p.achat_riz_kg) + " / kg";
+      document.getElementById("contactTel").textContent = p.telephone;
+
+      const maniocDispo = p.manioc_statut === "disponible";
+      document.getElementById("heroManiocStatus").textContent = maniocDispo ? "Disponible" : "Bientôt disponible";
+      document.getElementById("badgeManioc").textContent = maniocDispo ? "Disponible" : "Bientôt disponible";
+      document.getElementById("badgeManioc").className = "badge " + (maniocDispo ? "badge-ok" : "badge-soon");
+      document.getElementById("textManiocDispo").textContent = maniocDispo ? "En stock" : "Prochainement";
+      document.getElementById("heroLivraisonStatus").textContent = p.livraison === "gratuite" ? "Gratuite" : "Selon zone";
+      document.getElementById("yearSpan").textContent = new Date().getFullYear();
+      updateOrderSummary();
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("open");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("open");
+    }
+
+    document.querySelectorAll(".modal-backdrop").forEach((backdrop) => {
+      backdrop.addEventListener("click", (e) => {
+        if (e.target === backdrop) backdrop.classList.remove("open");
+      });
+    });
+
+    function openOrderModal(productName = "LOSO YA KILO", formatKg = 25) {
+      document.getElementById("ordProduct").value = productName;
+      document.getElementById("ordFormat").value = String(formatKg);
+      document.getElementById("orderConfirmation").style.display = "none";
+      updateOrderSummary();
+      openModal("orderModal");
+    }
+
+    function getUnitPrice(product, formatKg) {
+      const p = getParams();
+      if (product === "LOSO YA KILO") return formatKg === 50 ? Number(p.riz_50) : Number(p.riz_25);
+      if (product === "Farine de maïs") return formatKg === 50 ? Number(p.mais_50) : Number(p.mais_25);
+      return 0;
+    }
+
+    function updateOrderSummary() {
+      const product = document.getElementById("ordProduct").value;
+      const formatKg = Number(document.getElementById("ordFormat").value);
+      const qty = Math.max(1, Number(document.getElementById("ordQty").value || 1));
+      const unit = getUnitPrice(product, formatKg);
+      const summaryEl = document.getElementById("orderSummary");
+
+      if (unit > 0) {
+        summaryEl.innerHTML = `Total estimé : <strong>${formatFC(unit * qty)}</strong> (${qty} sac(s) de ${formatKg} kg)`;
+      } else {
+        summaryEl.innerHTML = `Produit en préparation : <strong>Tarif communiqué lors de la confirmation</strong>`;
+      }
+    }
+
+    ["ordProduct", "ordFormat", "ordQty"].forEach((id) => {
+      document.getElementById(id).addEventListener("change", updateOrderSummary);
+      document.getElementById(id).addEventListener("input", updateOrderSummary);
+    });
+
+    document.getElementById("orderForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const product = document.getElementById("ordProduct").value;
+      const formatKg = Number(document.getElementById("ordFormat").value);
+      const qty = Math.max(1, Number(document.getElementById("ordQty").value || 1));
+      const delivery = document.getElementById("ordDelivery").value;
+      const name = document.getElementById("ordName").value.trim();
+      const phone = document.getElementById("ordPhone").value.trim();
+      const address = document.getElementById("ordAddress").value.trim();
+      const totalFc = getUnitPrice(product, formatKg) * qty;
+
+      const st = getAdminState();
+      if (st && Array.isArray(st.commandes)) {
+        const nextNum = "CMD-BF-" + (100 + st.commandes.length + 1);
+        st.commandes.unshift({
+          id: Date.now(),
+          numero: nextNum,
+          date: new Date().toISOString().slice(0, 10),
+          client: name,
+          tel: phone,
+          detail: `${product} — ${formatKg} kg × ${qty} (${delivery}${address ? " — " + address : ""})`,
+          totalFc: totalFc,
+          statut: "Nouvelle commande",
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(st));
+      }
+
+      const conf = document.getElementById("orderConfirmation");
+      conf.style.display = "block";
+      conf.innerHTML = `<strong>Commande enregistrée !</strong><br>Merci ${name}. Votre demande (${product}, ${formatKg} kg × ${qty}) a bien été transmise à BELAM FOOD.`;
+      e.target.reset();
+      updateOrderSummary();
+    });
+
+    function openServiceModal(type) {
+      document.getElementById("srvType").value = type;
+      document.getElementById("serviceModalTitle").textContent =
+        type === "Usinage" ? "Demande d'usinage (Riz / Maïs)" : "Proposition de riz fini / Demande d'avance";
+      document.getElementById("serviceConfirmation").style.display = "none";
+      openModal("serviceModal");
+    }
+
+    document.getElementById("serviceForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const type = document.getElementById("srvType").value;
+      const name = document.getElementById("srvName").value.trim();
+      const weight = document.getElementById("srvWeight").value;
+      const conf = document.getElementById("serviceConfirmation");
+      conf.style.display = "block";
+      conf.innerHTML = `<strong>Demande envoyée !</strong><br>Merci ${name}. Notre équipe traitera votre demande (${type}, ${weight} kg) dans les plus brefs délais.`;
+      e.target.reset();
+    });
+
+    applyPublicParams();
+  </script>
+</body>
+</html>

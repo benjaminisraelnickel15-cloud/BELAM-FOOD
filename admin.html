@@ -1,0 +1,3332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administration — BELAM FOOD</title>
+  <style>
+    :root {
+      --bleu-profond: #081c3a;
+      --bleu-royal: #123b7a;
+      --bleu-clair: #eef3fa;
+      --or-cuivre: #c88a2b;
+      --or-clair: #f7ecd7;
+      --blanc: #ffffff;
+      --texte: #142338;
+      --texte-doux: #54647c;
+      --bordure: #d6e0ee;
+      --succes: #157347;
+      --alerte: #996400;
+      --danger: #b42318;
+      --rayon: 12px;
+      --ombre: 0 8px 24px rgba(8, 28, 58, 0.07);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bleu-clair);
+      color: var(--texte);
+      line-height: 1.5;
+    }
+
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--bleu-profond) 0%, var(--bleu-royal) 100%);
+    }
+
+    .login-screen.hidden {
+      display: none;
+    }
+
+    .login-card {
+      background: var(--blanc);
+      border-radius: var(--rayon);
+      max-width: 430px;
+      width: 100%;
+      padding: 28px 24px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+      border-top: 4px solid var(--or-cuivre);
+    }
+
+    .login-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .login-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: var(--bleu-profond);
+      border: 2px solid var(--or-cuivre);
+      color: #f3be68;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      font-size: 1.1rem;
+    }
+
+    .login-card h1 {
+      font-size: 1.25rem;
+      color: var(--bleu-profond);
+    }
+
+    .login-card p.sub {
+      font-size: 0.86rem;
+      color: var(--texte-doux);
+      margin-bottom: 18px;
+    }
+
+    .login-error {
+      display: none;
+      background: #fdecec;
+      border: 1px solid #f5b5b0;
+      color: var(--danger);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .app-shell {
+      display: none;
+      grid-template-columns: 265px 1fr;
+      min-height: 100vh;
+    }
+
+    .app-shell.authenticated {
+      display: grid;
+    }
+
+    aside.sidebar {
+      background: var(--bleu-profond);
+      color: var(--blanc);
+      padding: 22px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 3px solid var(--or-cuivre);
+    }
+
+    .side-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      margin-bottom: 18px;
+    }
+
+    .side-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: var(--bleu-royal);
+      border: 2px solid var(--or-cuivre);
+      color: #f3be68;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+    }
+
+    .side-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      color: #d6e2f2;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: rgba(200, 138, 43, 0.22);
+      color: #f6c776;
+    }
+
+    .nav-btn.hidden-by-role {
+      display: none;
+    }
+
+    .side-footer {
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.14);
+      font-size: 0.82rem;
+      color: #b7c8e0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    main.main-content {
+      padding: 24px 28px 48px;
+    }
+
+    .topbar {
+      background: var(--blanc);
+      border: 1px solid var(--bordure);
+      border-radius: var(--rayon);
+      padding: 16px 20px;
+      margin-bottom: 22px;
+      box-shadow: var(--ombre);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .topbar h1 {
+      font-size: 1.35rem;
+      color: var(--bleu-profond);
+    }
+
+    .topbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .user-pill {
+      background: var(--bleu-clair);
+      border: 1px solid var(--bordure);
+      color: var(--bleu-profond);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .role-scope-banner {
+      background: var(--blanc);
+      border: 1px solid var(--bordure);
+      border-left: 4px solid var(--or-cuivre);
+      border-radius: var(--rayon);
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      font-size: 0.86rem;
+      color: var(--texte-doux);
+      box-shadow: var(--ombre);
+    }
+
+    .role-scope-banner strong {
+      color: var(--bleu-profond);
+    }
+
+    input,
+    select,
+    textarea {
+      font-family: inherit;
+      font-size: 0.92rem;
+      padding: 9px 12px;
+      border: 1px solid #c3d0e3;
+      border-radius: 8px;
+      background: var(--blanc);
+      color: var(--texte);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--blanc);
+      border: 1px solid var(--bordure);
+      border-left: 4px solid var(--bleu-royal);
+      border-radius: var(--rayon);
+      padding: 16px 18px;
+      box-shadow: var(--ombre);
+    }
+
+    .kpi-card.gold {
+      border-left-color: var(--or-cuivre);
+    }
+
+    .kpi-card span {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--texte-doux);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .kpi-card strong {
+      font-size: 1.25rem;
+      color: var(--bleu-profond);
+    }
+
+    .module-panel {
+      display: none;
+    }
+
+    .module-panel.active {
+      display: block;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .grid-equal {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--blanc);
+      border: 1px solid var(--bordure);
+      border-radius: var(--rayon);
+      padding: 20px;
+      box-shadow: var(--ombre);
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      color: var(--bleu-profond);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--bordure);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .form-row-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--bleu-profond);
+      margin-bottom: 4px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 15px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--or-cuivre);
+      color: var(--blanc);
+    }
+
+    .btn-secondary {
+      background: var(--bleu-royal);
+      color: var(--blanc);
+    }
+
+    .btn-ghost {
+      background: var(--bleu-clair);
+      color: var(--bleu-profond);
+    }
+
+    .btn-pay {
+      background: #e3f6ec;
+      color: var(--succes);
+    }
+
+    .btn-sm {
+      padding: 5px 9px;
+      font-size: 0.78rem;
+      border-radius: 6px;
+    }
+
+    .btn-detail {
+      background: #e9eff8;
+      color: var(--bleu-royal);
+    }
+
+    .btn-edit {
+      background: var(--or-clair);
+      color: var(--alerte);
+    }
+
+    .btn-del {
+      background: #fdecec;
+      color: var(--danger);
+    }
+
+    .actions-cell {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--bordure);
+      vertical-align: middle;
+    }
+
+    th {
+      background: var(--bleu-clair);
+      color: var(--bleu-profond);
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+
+    .badge-ok {
+      background: #e3f6ec;
+      color: var(--succes);
+    }
+
+    .badge-warn {
+      background: var(--or-clair);
+      color: var(--alerte);
+    }
+
+    .badge-err {
+      background: #fdecec;
+      color: var(--danger);
+    }
+
+    .calc-preview {
+      background: var(--bleu-clair);
+      border-left: 3px solid var(--bleu-royal);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.88rem;
+      margin-bottom: 12px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--bleu-profond);
+      color: var(--blanc);
+      border-left: 4px solid var(--or-cuivre);
+      padding: 12px 16px;
+      border-radius: 8px;
+      box-shadow: var(--ombre);
+      display: none;
+      z-index: 300;
+      font-size: 0.9rem;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 28, 58, 0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 250;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--blanc);
+      border-radius: var(--rayon);
+      max-width: 540px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      border-top: 4px solid var(--or-cuivre);
+      box-shadow: var(--ombre);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--bordure);
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--texte-doux);
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      font-size: 0.9rem;
+    }
+
+    .detail-box {
+      background: var(--bleu-clair);
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+
+    .detail-box span {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--texte-doux);
+      font-weight: 700;
+    }
+
+    @media (max-width: 1024px) {
+      .app-shell.authenticated {
+        grid-template-columns: 1fr;
+      }
+
+      .kpi-grid,
+      .grid-2,
+      .grid-equal,
+      .form-row,
+      .form-row-3,
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <datalist id="tiersDatalist"></datalist>
+
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="login-logo">BF</div>
+        <div>
+          <h1>Connexion Administration</h1>
+          <div style="font-size: 0.78rem; color: var(--texte-doux);">BELAM FOOD — Accès réservé</div>
+        </div>
+      </div>
+      <p class="sub">
+        Veuillez saisir vos identifiants de compte enregistré pour accéder à la gestion de BELAM FOOD.
+      </p>
+
+      <div class="login-error" id="loginError"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginIdentifiant">Téléphone ou email</label>
+          <input type="text" id="loginIdentifiant" placeholder="Téléphone ou email" required />
+        </div>
+        <div class="form-group">
+          <label for="loginMotDePasse">Mot de passe</label>
+          <input type="password" id="loginMotDePasse" placeholder="Mot de passe" required />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 6px;">
+          Se connecter à l'administration
+        </button>
+      </form>
+
+      <div style="margin-top: 14px; text-align: center;">
+        <a href="index.html" style="font-size: 0.86rem; color: var(--bleu-royal); font-weight: 700; text-decoration: none;">
+          ← Retour à la page publique
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar">
+      <div>
+        <div class="side-brand">
+          <div class="side-logo">BF</div>
+          <div>
+            <strong>BELAM FOOD</strong>
+            <div style="font-size: 0.76rem; color: #f3be68;">Gestion & Usine • Kisangani</div>
+          </div>
+        </div>
+
+        <nav class="side-nav" id="sideNav">
+          <button class="nav-btn active" data-tab="dashboard">Tableau de bord</button>
+          <button class="nav-btn" data-tab="stocks">Gestion des Stocks</button>
+          <button class="nav-btn" data-tab="production">Production propre</button>
+          <button class="nav-btn" data-tab="usinage">Usinage clients</button>
+          <button class="nav-btn" data-tab="achats">Achats riz & Avances</button>
+          <button class="nav-btn" data-tab="ventes">Ventes directes</button>
+          <button class="nav-btn" data-tab="commandes">Commandes en ligne</button>
+          <button class="nav-btn" data-tab="finances">Caisse & Dépenses</button>
+          <button class="nav-btn" data-tab="tiers">Clients & Fournisseurs</button>
+          <button class="nav-btn" data-tab="parametres">Paramètres & Comptes</button>
+        </nav>
+      </div>
+
+      <div class="side-footer">
+        <div>Av. Mongala, Plateau Boyoma, Makiso</div>
+        <div>Tél : +243 977 579 321</div>
+        <a href="index.html" class="btn btn-primary" style="text-align:center;">← Retour au site public</a>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div>
+          <h1>Espace Administration — BELAM FOOD</h1>
+          <div style="font-size: 0.85rem; color: var(--texte-doux);">
+            Gestion des stocks, ventes au comptant ou à payer plus tard, emprunts/avances et comptes
+          </div>
+        </div>
+
+        <div class="topbar-controls">
+          <span class="user-pill" id="connectedUserBadge">Connecté : Propriétaire</span>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="deconnexion()">Déconnexion</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnResetDemo" onclick="reinitialiserDonnees()">Réinitialiser démo</button>
+        </div>
+      </div>
+
+      <div class="role-scope-banner" id="roleScopeBanner"></div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span>Stock commercial Riz (LOSO YA KILO)</span>
+          <strong id="kpiStockRiz">0 kg</strong>
+        </div>
+        <div class="kpi-card">
+          <span>Stock commercial Farine de maïs</span>
+          <strong id="kpiStockMais">0 kg</strong>
+        </div>
+        <div class="kpi-card gold">
+          <span>Solde de caisse actuel</span>
+          <strong id="kpiCaisse">0 FC</strong>
+        </div>
+        <div class="kpi-card gold">
+          <span>Avances clients à déduire</span>
+          <strong id="kpiAvances">0 FC</strong>
+        </div>
+      </div>
+
+      <!-- 1. TABLEAU DE BORD -->
+      <section class="module-panel active" id="tab-dashboard">
+        <div class="grid-equal">
+          <div class="card">
+            <h2>Synthèse des stocks commerciaux (hors stock clients)</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Article</th>
+                    <th>Stock (kg)</th>
+                    <th>Conditionnement / Unité</th>
+                  </tr>
+                </thead>
+                <tbody id="tableStocksBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Synthèse financière & activité</h2>
+            <div class="table-wrap">
+              <table>
+                <tbody>
+                  <tr><td>Total recettes encaissées</td><td style="text-align:right;"><strong id="statRecettes">0 FC</strong></td></tr>
+                  <tr><td>Créances ventes à payer plus tard</td><td style="text-align:right;"><strong id="statCreditsVentes">0 FC</strong></td></tr>
+                  <tr><td>Total dépenses & sorties</td><td style="text-align:right;"><strong id="statDepenses">0 FC</strong></td></tr>
+                  <tr><td>Bénéfice net encaissé (Recettes - Dépenses)</td><td style="text-align:right;"><strong id="statBenefice">0 FC</strong></td></tr>
+                  <tr>
+                    <td>
+                      Personnes ayant emprunté / avances
+                      <div style="font-size:0.78rem; color:var(--texte-doux);" id="statEmprunteursDetail">0 personne(s)</div>
+                    </td>
+                    <td style="text-align:right;">
+                      <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px; flex-wrap:wrap;">
+                        <strong id="statEmpruntsMontant">0 FC</strong>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="ouvrirEmpruntsDepuisDashboard()">
+                          Voir emprunteurs
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr><td>Riz clients actuellement en usine (non commercial)</td><td style="text-align:right;"><strong id="statStockClients">0 kg</strong></td></tr>
+                  <tr><td>Commandes en attente / Livrées</td><td style="text-align:right;"><strong id="statCommandes">0 / 0</strong></td></tr>
+                  <tr><td>Comptes utilisateurs actifs</td><td style="text-align:right;"><strong id="statComptes">0</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. GESTION DES STOCKS -->
+      <section class="module-panel" id="tab-stocks">
+        <div class="grid-2">
+          <div class="card">
+            <h2>Enregistrer une entrée ou sortie de stock</h2>
+            <form id="formMouvementStock">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Type de mouvement</label>
+                  <select id="stkSens" required>
+                    <option value="entree">Entrée en stock (+)</option>
+                    <option value="sortie">Sortie de stock (-)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Article concerné</label>
+                  <select id="stkArticle" required>
+                    <option value="riz_fini">Riz fini (LOSO YA KILO)</option>
+                    <option value="farine_mais">Farine de maïs</option>
+                    <option value="son_riz">Son de riz (par sac plein)</option>
+                    <option value="son_mais">Son de maïs (au kilo)</option>
+                    <option value="matiere_paddy">Matière première — Riz paddy</option>
+                    <option value="matiere_mais">Matière première — Maïs grain</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row-3">
+                <div class="form-group">
+                  <label>Sacs de 25 kg</label>
+                  <input type="number" id="stkSacs25" min="0" step="1" value="0" />
+                </div>
+                <div class="form-group">
+                  <label>Sacs de 50 kg</label>
+                  <input type="number" id="stkSacs50" min="0" step="1" value="0" />
+                </div>
+                <div class="form-group">
+                  <label>Kg libres / en plus</label>
+                  <input type="number" id="stkKgLibres" min="0" step="0.5" value="100" />
+                </div>
+              </div>
+
+              <div class="calc-preview" id="stkTotalPreview">
+                Total calculé : <strong>100 kg</strong> (0 sac de 25 kg + 0 sac de 50 kg + 100 kg)
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Quantité totale (kg)</label>
+                  <input type="number" id="stkKg" min="0.5" step="0.5" value="100" required />
+                </div>
+                <div class="form-group" id="stkSacsPleinsGroup" style="display:none;">
+                  <label>Nombre de sacs pleins (Son de riz)</label>
+                  <input type="number" id="stkSacsPleins" min="0" step="1" value="1" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Motif du mouvement</label>
+                  <select id="stkMotifType">
+                    <option value="Approvisionnement / Réception">Approvisionnement / Réception</option>
+                    <option value="Entrée production">Entrée production</option>
+                    <option value="Sortie vente / livraison">Sortie vente / livraison</option>
+                    <option value="Transfert vers usine">Transfert vers usine</option>
+                    <option value="Perte / Avarie / Échantillon">Perte / Avarie / Échantillon</option>
+                    <option value="Ajustement d'inventaire">Ajustement d'inventaire</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Date</label>
+                  <input type="date" id="stkDate" required />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Observation / Référence (facultatif)</label>
+                <input type="text" id="stkNote" placeholder="Ex. Réception dépôt Makiso, lot n°4..." />
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width:100%;">Valider le mouvement de stock</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h2>État actuel des stocks (commercial & matières premières)</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Article</th>
+                    <th>Disponible (kg)</th>
+                    <th>Équivalent sacs / unité</th>
+                  </tr>
+                </thead>
+                <tbody id="tableStocksDetailBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>
+            <span>Journal complet des entrées et sorties de stock</span>
+            <select id="filtreStockSens" style="width:auto; font-size:0.84rem; padding:6px 10px;">
+              <option value="tous">Tous les mouvements</option>
+              <option value="entree">Entrées uniquement (+)</option>
+              <option value="sortie">Sorties uniquement (-)</option>
+            </select>
+          </h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Mouvement</th>
+                  <th>Article</th>
+                  <th>Quantité</th>
+                  <th>Motif / Origine</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tableMouvementsStockBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. PRODUCTION PROPRE -->
+      <section class="module-panel" id="tab-production">
+        <div class="grid-2">
+          <div class="card">
+            <h2>Enregistrer une production propre</h2>
+            <form id="formProduction">
+              <div class="form-group">
+                <label>Produit transformé</label>
+                <select id="prodType" required>
+                  <option value="riz">Riz fini (LOSO YA KILO)</option>
+                  <option value="mais">Farine de maïs</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Matière première entrée (kg)</label>
+                  <input type="number" id="prodBrut" min="1" step="0.1" value="500" required />
+                </div>
+                <div class="form-group">
+                  <label>Produit fini obtenu (kg)</label>
+                  <input type="number" id="prodFini" min="1" step="0.1" value="350" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Sacs de 25 kg conditionnés</label>
+                  <input type="number" id="prodSacs25" min="0" value="6" />
+                </div>
+                <div class="form-group">
+                  <label>Sacs de 50 kg conditionnés</label>
+                  <input type="number" id="prodSacs50" min="0" value="4" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Sous-produit / son obtenu (kg)</label>
+                  <input type="number" id="prodSon" min="0" step="0.1" value="110" />
+                </div>
+                <div class="form-group">
+                  <label>Sacs pleins de son de riz (si riz)</label>
+                  <input type="number" id="prodSonSacsPleins" min="0" value="1" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Coût de production (FC)</label>
+                <input type="number" id="prodCout" min="0" value="45000" />
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%;">Valider l'entrée en stock</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h2>Historique des productions propres</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Produit</th>
+                    <th>Fini (kg)</th>
+                    <th>Son (kg / sacs)</th>
+                    <th>Coût (FC)</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tableProductionBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. USINAGE CLIENTS -->
+      <section class="module-panel" id="tab-usinage">
+        <div class="grid-2">
+          <div class="card">
+            <h2>Nouvel usinage client (stock séparé)</h2>
+            <form id="formUsinage">
+              <div class="form-group">
+                <label>Client (taper un nom ou choisir dans la liste)</label>
+                <input type="text" id="usiClient" list="tiersDatalist" placeholder="Ex. Maman Marie ou choisir un client..." required />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Produit apporté</label>
+                  <select id="usiType">
+                    <option value="riz">Riz paddy</option>
+                    <option value="mais">Maïs</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Quantité brute (kg)</label>
+                  <input type="number" id="usiBrut" min="1" step="0.1" value="300" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Produit fini client (kg)</label>
+                  <input type="number" id="usiFini" min="1" step="0.1" value="210" required />
+                </div>
+                <div class="form-group">
+                  <label>Frais d'usinage (FC)</label>
+                  <input type="number" id="usiFrais" min="0" value="30000" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Montant payé (FC)</label>
+                  <input type="number" id="usiPaye" min="0" value="30000" required />
+                </div>
+                <div class="form-group">
+                  <label>Statut retrait</label>
+                  <select id="usiRetrait">
+                    <option value="en_usine">En usine</option>
+                    <option value="recupere">Récupéré par le client</option>
+                  </select>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-secondary" style="width:100%;">Enregistrer l'usinage client</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h2>Dossiers d'usinage clients (hors stock commercial)</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Client</th>
+                    <th>Fini (kg)</th>
+                    <th>Frais / Payé</th>
+                    <th>Retrait</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tableUsinageBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. ACHATS DE RIZ & AVANCES -->
+      <section class="module-panel" id="tab-achats">
+        <div class="grid-equal">
+          <div class="card">
+            <h2>Accorder une avance client</h2>
+            <form id="formAvance">
+              <div class="form-group">
+                <label>Client / Fournisseur (taper ou choisir)</label>
+                <input type="text" id="avaClient" list="tiersDatalist" placeholder="Ex. Coopérative ou nom du client..." required />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Montant de l'avance (FC)</label>
+                  <input type="number" id="avaMontant" min="1" value="180000" required />
+                </div>
+                <div class="form-group">
+                  <label>Note / Motif</label>
+                  <input type="text" id="avaNote" value="Avance sur livraison de riz fini" />
+                </div>
+              </div>
+              <button type="submit" class="btn btn-secondary" style="width:100%;">Enregistrer l'avance (sortie caisse)</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h2>Acheter du riz fini (déduction auto des avances)</h2>
+            <form id="formAchatRiz">
+              <div class="form-group">
+                <label>Client / Fournisseur vendeur (taper ou choisir)</label>
+                <input type="text" id="achClient" list="tiersDatalist" placeholder="Ex. Nom du vendeur ou fournisseur..." required />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Poids acheté (kg)</label>
+                  <input type="number" id="achPoids" min="1" step="0.1" value="200" required />
+                </div>
+                <div class="form-group">
+                  <label>Prix d'achat / kg (FC)</label>
+                  <input type="number" id="achPrixKg" min="1" value="2500" required />
+                </div>
+              </div>
+              <div class="calc-preview" id="achatPreview">
+                Brut : <strong>500 000 FC</strong> | Avances déduites : <strong>0 FC</strong> | Net à payer : <strong>500 000 FC</strong>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%;">Valider l'achat de riz</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="grid-equal">
+          <div class="card">
+            <h2>Historique des avances accordées</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Client</th>
+                    <th>Montant</th>
+                    <th>Motif</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tableAvancesBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Historique des achats de riz</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Client</th>
+                    <th>Poids</th>
+                    <th>Brut</th>
+                    <th>Déduit</th>
+                    <th>Net payé</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tableAchatsBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. VENTES DIRECTES -->
+      <section class="module-panel" id="tab-ventes">
+        <div class="grid-2">
+          <div class="card">
+            <h2>Enregistrer une vente directe</h2>
+            <form id="formVente">
+              <div class="form-group">
+                <label>Produit & mode de vente</label>
+                <select id="venProduit">
+                  <option value="riz_25" data-unite="sac" data-article="riz_fini" data-kg="25" data-prix="75000">LOSO YA KILO — Sac 25 kg (75 000 FC)</option>
+                  <option value="riz_50" data-unite="sac" data-article="riz_fini" data-kg="50" data-prix="150000">LOSO YA KILO — Sac 50 kg (150 000 FC)</option>
+                  <option value="mais_25" data-unite="sac" data-article="farine_mais" data-kg="25" data-prix="60000">Farine de maïs — Sac 25 kg (60 000 FC)</option>
+                  <option value="mais_50" data-unite="sac" data-article="farine_mais" data-kg="50" data-prix="120000">Farine de maïs — Sac 50 kg (120 000 FC)</option>
+                  <option value="son_riz_sac" data-unite="sac_plein" data-article="son_riz" data-kg="110" data-prix="15000">Son de riz — Sac plein (100 kg, 120 kg, etc.)</option>
+                  <option value="son_mais_kg" data-unite="kg" data-article="son_mais" data-kg="1" data-prix="300">Son de maïs — Au kilo (poids libre en kg)</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label id="venQteLabel">Quantité (sacs)</label>
+                  <input type="number" id="venQte" min="1" step="1" value="1" required />
+                </div>
+                <div class="form-group" id="venPoidsReelGroup" style="display:none;">
+                  <label>Poids réel total du/des sac(s) plein(s) (kg)</label>
+                  <input type="number" id="venPoidsReel" min="1" step="0.5" value="110" placeholder="Ex. 100, 120, 230..." />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Prix unitaire (FC / sac ou FC / kg)</label>
+                  <input type="number" id="venPrixUnit" min="0" value="75000" required />
+                </div>
+                <div class="form-group">
+                  <label>Statut de paiement</label>
+                  <select id="venStatutPaiement">
+                    <option value="paye">Payé comptant</option>
+                    <option value="credit">À payer plus tard (Crédit)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Mode de paiement (si payé)</label>
+                  <select id="venMode">
+                    <option value="Espèces">Espèces</option>
+                    <option value="M-Pesa">M-Pesa</option>
+                    <option value="Airtel Money">Airtel Money</option>
+                    <option value="Orange Money">Orange Money</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Nom du client</label>
+                  <input type="text" id="venClient" value="Client comptoir Kisangani" required />
+                </div>
+              </div>
+              <div class="calc-preview" id="ventePreview">
+                Total vente : <strong>75 000 FC</strong> | Sortie stock : <strong>25 kg</strong>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%;">Valider la vente (sortie stock)</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h2>
+              <span>Journal des ventes directes</span>
+              <select id="filtreVenteStatut" style="width:auto; font-size:0.84rem; padding:6px 10px;">
+                <option value="tous">Toutes les ventes</option>
+                <option value="credit">À payer plus tard (Crédit)</option>
+                <option value="paye">Payées</option>
+              </select>
+            </h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Client</th>
+                    <th>Article & Poids</th>
+                    <th>Total / Reste</th>
+                    <th>Paiement</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tableVentesBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. COMMANDES EN LIGNE -->
+      <section class="module-panel" id="tab-commandes">
+        <div class="card">
+          <h2>Gestion des commandes clients</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>N° Commande</th>
+                  <th>Client</th>
+                  <th>Détail</th>
+                  <th>Total (FC)</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tableCommandesBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. CAISSE & DÉPENSES -->
+      <section class="module-panel" id="tab-finances">
+        <div class="grid-2">
+          <div class="card">
+            <h2>Enregistrer une dépense</h2>
+            <form id="formDepense">
+              <div class="form-group">
+                <label>Catégorie de dépense</label>
+                <select id="depCat">
+                  <option value="Carburant & énergie">Carburant & énergie</option>
+                  <option value="Transport & livraison">Transport & livraison</option>
+                  <option value="Sacs & emballages">Sacs & emballages</option>
+                  <option value="Salaires & main-d'œuvre">Salaires & main-d'œuvre</option>
+                  <option value="Maintenance machines">Maintenance machines</option>
+                  <option value="Autres charges">Autres charges</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Montant (FC)</label>
+                  <input type="number" id="depMontant" min="1" value="25000" required />
+                </div>
+                <div class="form-group">
+                  <label>Mode de paiement</label>
+                  <select id="depMode">
+                    <option value="Espèces">Espèces</option>
+                    <option value="M-Pesa">M-Pesa</option>
+                    <option value="Airtel Money">Airtel Money</option>
+                    <option value="Orange Money">Orange Money</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Description</label>
+                <input type="text" id="depDesc" placeholder="Ex. Achat carburant groupe électrogène" required />
+              </div>
+              <button type="submit" class="btn btn-secondary" style="width:100%;">Enregistrer la dépense</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h2>Journal des mouvements de caisse</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Libellé</th>
+                    <th>Mode</th>
+                    <th>Montant (FC)</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tableCaisseBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. CLIENTS & FOURNISSEURS -->
+      <section class="module-panel" id="tab-tiers">
+        <div class="grid-2">
+          <div class="card">
+            <h2>Ajouter un client ou fournisseur</h2>
+            <form id="formTiers">
+              <div class="form-group">
+                <label>Nom complet / Établissement</label>
+                <input type="text" id="tiersNom" required placeholder="Nom du client ou fournisseur" />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Téléphone</label>
+                  <input type="tel" id="tiersTel" placeholder="+243 ..." />
+                </div>
+                <div class="form-group">
+                  <label>Quartier / Commune</label>
+                  <input type="text" id="tiersAdresse" placeholder="Makiso, Kabondo, Tshopo..." />
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%;">Enregistrer le contact</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h2>Répertoire & soldes d'avances</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Téléphone</th>
+                    <th>Adresse</th>
+                    <th>Avances dues</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tableTiersBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. PARAMÈTRES & COMPTES UTILISATEURS -->
+      <section class="module-panel" id="tab-parametres">
+        <div class="grid-equal">
+          <div class="card">
+            <h2>Créer un compte utilisateur (équipe BELAM FOOD)</h2>
+            <form id="formUtilisateur">
+              <div class="form-group">
+                <label>Nom complet de la personne</label>
+                <input type="text" id="userNom" placeholder="Ex. Jean-Pierre Mukendi" required />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Téléphone (identifiant de connexion)</label>
+                  <input type="tel" id="userTel" placeholder="+243 97..." required />
+                </div>
+                <div class="form-group">
+                  <label>Email (optionnel)</label>
+                  <input type="email" id="userEmail" placeholder="nom@belamfood.cd" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Rôle attribué</label>
+                  <select id="userRole" required>
+                    <option value="gerant">Gérant</option>
+                    <option value="comptable">Comptable</option>
+                    <option value="magasinier">Magasinier</option>
+                    <option value="employe">Employé</option>
+                    <option value="chauffeur">Chauffeur</option>
+                    <option value="technicien">Technicien</option>
+                    <option value="proprietaire">Propriétaire</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Mot de passe initial</label>
+                  <input type="password" id="userPass" placeholder="Min. 6 caractères" minlength="6" required />
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%;">Créer le compte utilisateur</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h2>Paramètres du site & tarifs commerciaux</h2>
+            <form id="formParametresSite">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>LOSO YA KILO — Sac 25 kg (FC)</label>
+                  <input type="number" id="paramRiz25" min="1" required />
+                </div>
+                <div class="form-group">
+                  <label>LOSO YA KILO — Sac 50 kg (FC)</label>
+                  <input type="number" id="paramRiz50" min="1" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Farine de maïs — Sac 25 kg (FC)</label>
+                  <input type="number" id="paramMais25" min="1" required />
+                </div>
+                <div class="form-group">
+                  <label>Farine de maïs — Sac 50 kg (FC)</label>
+                  <input type="number" id="paramMais50" min="1" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Son de riz — Prix par sac plein (100/120 kg, FC)</label>
+                  <input type="number" id="paramSonRizSac" min="0" required />
+                </div>
+                <div class="form-group">
+                  <label>Son de maïs — Prix au kilo (FC / kg)</label>
+                  <input type="number" id="paramSonMaisKg" min="0" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Prix achat riz fini / kg (FC)</label>
+                  <input type="number" id="paramAchatRizKg" min="1" required />
+                </div>
+                <div class="form-group">
+                  <label>Statut Farine de manioc</label>
+                  <select id="paramManiocStatut">
+                    <option value="bientot_disponible">Bientôt disponible</option>
+                    <option value="disponible">Disponible à la vente</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Téléphone / WhatsApp affiché</label>
+                  <input type="text" id="paramTelephone" required />
+                </div>
+                <div class="form-group">
+                  <label>Livraison Kisangani</label>
+                  <select id="paramLivraison">
+                    <option value="gratuite">Gratuite (0 FC)</option>
+                    <option value="payante">Tarif selon zone</option>
+                  </select>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-secondary" style="width:100%;">Enregistrer les paramètres du site</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Comptes utilisateurs enregistrés (modifier / activer / supprimer)</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nom complet</th>
+                  <th>Téléphone / Email</th>
+                  <th>Rôle</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tableUtilisateursBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODALE ENCAISSEMENT VENTE À PAYER PLUS TARD -->
+  <div class="modal-backdrop" id="paySaleModal">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-head">
+        <h3 style="color: var(--succes);">Encaisser un paiement client</h3>
+        <button type="button" class="modal-close" onclick="closeModal('paySaleModal')">✕</button>
+      </div>
+      <form id="paySaleForm">
+        <div id="paySaleSummary" style="background: var(--bleu-clair); padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; font-size: 0.88rem;"></div>
+        <div class="form-group">
+          <label>Montant encaissé aujourd'hui (FC)</label>
+          <input type="number" id="paySaleMontant" min="1" required />
+        </div>
+        <div class="form-group">
+          <label>Mode de paiement</label>
+          <select id="paySaleMode">
+            <option value="Espèces">Espèces</option>
+            <option value="M-Pesa">M-Pesa</option>
+            <option value="Airtel Money">Airtel Money</option>
+            <option value="Orange Money">Orange Money</option>
+          </select>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:14px;">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('paySaleModal')">Annuler</button>
+          <button type="submit" class="btn btn-primary">Valider l'encaissement</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODALE CONFIRMATION SUPPRESSION -->
+  <div class="modal-backdrop" id="confirmDeleteModal">
+    <div class="modal-card" style="max-width: 430px;">
+      <div class="modal-head">
+        <h3 style="color: var(--danger);">Confirmer la suppression</h3>
+        <button type="button" class="modal-close" onclick="closeModal('confirmDeleteModal')">✕</button>
+      </div>
+      <p style="font-size: 0.94rem; color: var(--texte); margin-bottom: 10px;">
+        Voulez-vous vraiment supprimer définitivement cet enregistrement ?
+      </p>
+      <div id="confirmDeleteMeta" style="background: var(--bleu-clair); border-left: 3px solid var(--danger); padding: 10px 12px; border-radius: 8px; font-size: 0.88rem; color: var(--texte-doux); margin-bottom: 18px;"></div>
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('confirmDeleteModal')">Annuler</button>
+        <button type="button" class="btn btn-del" id="btnConfirmDeleteExec" style="background: var(--danger); color: var(--blanc);">
+          Supprimer définitivement
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE DÉTAIL -->
+  <div class="modal-backdrop" id="detailModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="detailModalTitle" style="color: var(--bleu-profond);">Détails de l'enregistrement</h3>
+        <button type="button" class="modal-close" onclick="closeModal('detailModal')">✕</button>
+      </div>
+      <div id="detailModalBody"></div>
+      <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('detailModal')">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE MODIFICATION -->
+  <div class="modal-backdrop" id="editModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="editModalTitle" style="color: var(--bleu-profond);">Modifier l'enregistrement</h3>
+        <button type="button" class="modal-close" onclick="closeModal('editModal')">✕</button>
+      </div>
+      <form id="editModalForm">
+        <div id="editModalFields"></div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px;">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('editModal')">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toastMsg"></div>
+
+  <script>
+    const STORAGE_KEY = "belam_food_admin_v2";
+    const SESSION_KEY = "belam_food_session_user_id";
+    const formatFC = (n) => new Intl.NumberFormat("fr-FR").format(Math.round(Number(n || 0))) + " FC";
+    const todayStr = () => new Date().toISOString().slice(0, 10);
+
+    const ROLE_LABELS = {
+      proprietaire: "Propriétaire",
+      gerant: "Gérant",
+      comptable: "Comptable",
+      magasinier: "Magasinier",
+      employe: "Employé",
+      chauffeur: "Chauffeur",
+      technicien: "Technicien",
+    };
+
+    const FULL_ACCESS_PERMS = {
+      tabs: ["dashboard", "stocks", "production", "usinage", "achats", "ventes", "commandes", "finances", "tiers", "parametres"],
+      canEdit: true,
+      canDelete: true,
+      canResetDemo: true,
+      desc: "Accès complet : gestion opérationnelle, finances, paramètres du site, comptes utilisateurs, modification et suppression.",
+    };
+
+    const ROLE_PERMISSIONS = {
+      proprietaire: FULL_ACCESS_PERMS,
+      technicien: {
+        ...FULL_ACCESS_PERMS,
+        desc: "Accès complet technicien (réseau & site) : gestion opérationnelle, finances, paramètres du site, comptes utilisateurs, modification et suppression.",
+      },
+      gerant: {
+        tabs: ["dashboard", "stocks", "production", "usinage", "achats", "ventes", "commandes", "finances", "tiers"],
+        canEdit: true,
+        canDelete: false,
+        canResetDemo: false,
+        desc: "Accès gérant : gestion quotidienne des stocks, production, usinage, achats/avances, ventes, commandes, caisse et clients/fournisseurs (sans accès aux paramètres/comptes ni suppression définitive).",
+      },
+      comptable: {
+        tabs: ["dashboard", "achats", "ventes", "finances", "tiers"],
+        canEdit: true,
+        canDelete: false,
+        canResetDemo: false,
+        desc: "Accès comptable : suivi de la caisse, dépenses, ventes/encaissements, avances/achats de riz et soldes clients/fournisseurs.",
+      },
+      magasinier: {
+        tabs: ["dashboard", "stocks", "production"],
+        canEdit: true,
+        canDelete: false,
+        canResetDemo: false,
+        desc: "Accès magasinier : entrées/sorties de stock et enregistrement des productions propres.",
+      },
+      employe: {
+        tabs: ["dashboard", "ventes", "commandes", "tiers"],
+        canEdit: false,
+        canDelete: false,
+        canResetDemo: false,
+        desc: "Accès employé : enregistrement des ventes directes, suivi des commandes et consultation/ajout des clients.",
+      },
+      chauffeur: {
+        tabs: ["dashboard", "commandes"],
+        canEdit: false,
+        canDelete: false,
+        canResetDemo: false,
+        desc: "Accès chauffeur : consultation et mise à jour des statuts de livraison des commandes.",
+      },
+    };
+
+    function getPermissions(role) {
+      return ROLE_PERMISSIONS[role] || ROLE_PERMISSIONS.employe;
+    }
+
+    function hasAdminPrivileges(role) {
+      return role === "proprietaire" || role === "technicien";
+    }
+
+    const ARTICLE_LABELS = {
+      riz_fini: "Riz fini (LOSO YA KILO)",
+      farine_mais: "Farine de maïs",
+      son_riz: "Son de riz (sac plein)",
+      son_mais: "Son de maïs (au kilo)",
+      matiere_paddy: "Matière première — Riz paddy",
+      matiere_mais: "Matière première — Maïs grain",
+    };
+
+    function hashPass(str) {
+      let h = 0;
+      for (let i = 0; i < str.length; i++) {
+        h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+      }
+      return String(Math.abs(h));
+    }
+
+    function normalizePhone(val) {
+      return String(val || "").replace(/[\s\-().]/g, "").toLowerCase();
+    }
+
+    const defaultState = {
+      parametres: {
+        riz_25: 75000,
+        riz_50: 150000,
+        mais_25: 60000,
+        mais_50: 120000,
+        son_riz_sac: 15000,
+        son_mais_kg: 300,
+        achat_riz_kg: 2500,
+        manioc_statut: "bientot_disponible",
+        telephone: "+243 977 579 321",
+        livraison: "gratuite",
+      },
+      utilisateurs: [
+        {
+          id: 1,
+          nom: "Propriétaire BELAM FOOD",
+          tel: "+243 977 579 321",
+          email: "admin@belamfood.cd",
+          password: hashPass("belam2026"),
+          role: "proprietaire",
+          actif: true,
+        },
+      ],
+      stocks: {
+        riz_fini: 1250,
+        farine_mais: 800,
+        son_riz: 220,
+        son_riz_sacs_pleins: 2,
+        son_mais: 150,
+        matiere_paddy: 0,
+        matiere_mais: 0,
+      },
+      mouvementsStock: [
+        { id: 1, date: "2026-11-18", sens: "entree", article: "riz_fini", kg: 700, sacsPleins: 0, motif: "Entrée production", note: "Production propre #1" },
+        { id: 2, date: "2026-11-18", sens: "entree", article: "son_riz", kg: 110, sacsPleins: 1, motif: "Entrée production", note: "Production propre #1 (1 sac plein)" },
+        { id: 3, date: "2026-11-19", sens: "sortie", article: "riz_fini", kg: 100, sacsPleins: 0, motif: "Sortie vente / livraison", note: "Vente Alimentation Boyoma" },
+      ],
+      tiers: [
+        { id: 1, nom: "Coopérative Agricole Tshopo", tel: "+243 970 112 233", adresse: "Makiso, Kisangani", avanceDue: 180000 },
+        { id: 2, nom: "Éts. Kabongo & Fils", tel: "+243 998 445 566", adresse: "Kabondo, Kisangani", avanceDue: 0 },
+      ],
+      productions: [
+        { id: 1, date: "2026-11-18", type: "riz", brutKg: 1000, finiKg: 700, sacs25: 12, sacs50: 8, sonKg: 110, sonSacsPleins: 1, coutFc: 90000 },
+      ],
+      usinages: [
+        { id: 1, date: "2026-11-19", clientId: 2, clientNom: "Éts. Kabongo & Fils", type: "riz", brutKg: 400, finiKg: 280, fraisFc: 40000, payeFc: 40000, statutRetrait: "en_usine" },
+      ],
+      avances: [
+        { id: 1, date: "2026-11-15", clientId: 1, clientNom: "Coopérative Agricole Tshopo", montantFc: 180000, motif: "Avance sur livraison de riz fini" },
+      ],
+      achats: [],
+      ventes: [
+        { id: 1, date: "2026-11-19", client: "Alimentation Boyoma", codeProduit: "riz_25", articleKey: "riz_fini", produitNom: "LOSO YA KILO — Sac 25 kg", qteLabel: "4 sac(s)", qte: 4, sacsPleins: 0, poidsKg: 100, totalFc: 300000, payeFc: 300000, statutPaiement: "paye", mode: "Espèces" },
+      ],
+      commandes: [
+        { id: 1, numero: "CMD-BF-101", date: "2026-11-20", client: "Maman Claudine", tel: "+243 971 223 344", detail: "LOSO YA KILO — 25 kg × 2 (Livraison Kisangani)", totalFc: 150000, statut: "Confirmée" },
+        { id: 2, numero: "CMD-BF-102", date: "2026-11-20", client: "Dépôt Mangobo", tel: "+243 972 556 677", detail: "Farine de maïs — 50 kg × 1 (Retrait usine)", totalFc: 120000, statut: "En préparation" },
+      ],
+      caisse: [
+        { id: 1, date: "2026-11-18", sens: "recette", libelle: "Fonds de roulement initial", mode: "Espèces", montantFc: 1500000 },
+        { id: 2, date: "2026-11-18", sens: "depense", libelle: "Coût production propre (riz)", mode: "Espèces", montantFc: 90000 },
+        { id: 3, date: "2026-11-19", sens: "recette", libelle: "Usinage client Éts. Kabongo & Fils", mode: "Espèces", montantFc: 40000 },
+        { id: 4, date: "2026-11-19", sens: "recette", libelle: "Vente Alimentation Boyoma", mode: "Espèces", montantFc: 300000 },
+      ],
+    };
+
+    let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || structuredClone(defaultState);
+    if (!Array.isArray(state.utilisateurs) || state.utilisateurs.length === 0) {
+      state.utilisateurs = structuredClone(defaultState.utilisateurs);
+    }
+    state.utilisateurs.forEach((u) => {
+      if (!u.password) u.password = hashPass("belam2026");
+    });
+    if (state.stocks.son_riz_sacs_pleins === undefined) {
+      state.stocks.son_riz_sacs_pleins = Math.floor((state.stocks.son_riz || 0) / 110);
+    }
+    if (state.stocks.matiere_paddy === undefined) state.stocks.matiere_paddy = 0;
+    if (state.stocks.matiere_mais === undefined) state.stocks.matiere_mais = 0;
+    if (!Array.isArray(state.mouvementsStock)) state.mouvementsStock = structuredClone(defaultState.mouvementsStock);
+    state.ventes.forEach((v) => {
+      if (v.payeFc === undefined) {
+        v.payeFc = v.statutPaiement === "credit" ? 0 : Number(v.totalFc || 0);
+      }
+      if (!v.statutPaiement) {
+        v.statutPaiement = Number(v.payeFc) >= Number(v.totalFc) ? "paye" : "credit";
+      }
+    });
+
+    let currentUser = null;
+
+    function getOrCreateTiersByName(rawName, autoSave = false) {
+      const cleanName = String(rawName || "").trim();
+      if (!cleanName) return null;
+      let found = state.tiers.find((t) => t.nom.trim().toLowerCase() === cleanName.toLowerCase());
+      if (!found) {
+        found = {
+          id: nextId(state.tiers),
+          nom: cleanName,
+          tel: "",
+          adresse: "",
+          avanceDue: 0,
+        };
+        state.tiers.push(found);
+        if (autoSave) saveState();
+      }
+      return found;
+    }
+
+    function applyRoleLimits() {
+      if (!currentUser) return;
+      const perms = getPermissions(currentUser.role);
+
+      document.querySelectorAll(".nav-btn").forEach((btn) => {
+        const allowed = perms.tabs.includes(btn.dataset.tab);
+        btn.classList.toggle("hidden-by-role", !allowed);
+      });
+
+      const activePanel = document.querySelector(".module-panel.active");
+      const activeTabName = activePanel ? activePanel.id.replace("tab-", "") : "dashboard";
+      if (!perms.tabs.includes(activeTabName)) {
+        allerOnglet("dashboard");
+      }
+
+      const resetBtn = document.getElementById("btnResetDemo");
+      if (resetBtn) resetBtn.style.display = perms.canResetDemo ? "inline-flex" : "none";
+
+      const banner = document.getElementById("roleScopeBanner");
+      if (banner) {
+        banner.innerHTML = `<strong>Poste actif : ${ROLE_LABELS[currentUser.role] || currentUser.role}</strong> — ${perms.desc}`;
+      }
+    }
+
+    function getSessionUser() {
+      const savedId = Number(sessionStorage.getItem(SESSION_KEY) || 0);
+      if (!savedId) return null;
+      return state.utilisateurs.find((u) => Number(u.id) === savedId && u.actif) || null;
+    }
+
+    function applyAuthUI() {
+      const loginScreen = document.getElementById("loginScreen");
+      const appShell = document.getElementById("appShell");
+      const badge = document.getElementById("connectedUserBadge");
+
+      if (currentUser) {
+        loginScreen.classList.add("hidden");
+        appShell.classList.add("authenticated");
+        badge.textContent = `Connecté : ${currentUser.nom} (${ROLE_LABELS[currentUser.role] || currentUser.role})`;
+        applyRoleLimits();
+        renderAll();
+      } else {
+        loginScreen.classList.remove("hidden");
+        appShell.classList.remove("authenticated");
+      }
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const ident = document.getElementById("loginIdentifiant").value.trim().toLowerCase();
+      const identNormPhone = normalizePhone(ident);
+      const passHash = hashPass(document.getElementById("loginMotDePasse").value);
+      const errEl = document.getElementById("loginError");
+
+      const matched = state.utilisateurs.find((u) => {
+        const telMatch = u.tel && normalizePhone(u.tel) === identNormPhone;
+        const emailMatch = u.email && u.email.trim().toLowerCase() === ident;
+        return (telMatch || emailMatch) && u.password === passHash;
+      });
+
+      if (!matched) {
+        errEl.textContent = "Identifiant ou mot de passe incorrect.";
+        errEl.style.display = "block";
+        return;
+      }
+
+      if (!matched.actif) {
+        errEl.textContent = "Ce compte est désactivé. Contactez un administrateur.";
+        errEl.style.display = "block";
+        return;
+      }
+
+      errEl.style.display = "none";
+      currentUser = matched;
+      sessionStorage.setItem(SESSION_KEY, String(matched.id));
+      document.getElementById("loginForm").reset();
+      applyAuthUI();
+      showToast(`Bienvenue, ${matched.nom} !`);
+    });
+
+    function deconnexion() {
+      currentUser = null;
+      sessionStorage.removeItem(SESSION_KEY);
+      document.getElementById("loginError").style.display = "none";
+      applyAuthUI();
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      if (currentUser) {
+        const refreshed = state.utilisateurs.find((u) => Number(u.id) === Number(currentUser.id));
+        if (!refreshed || !refreshed.actif) {
+          deconnexion();
+        } else {
+          currentUser = refreshed;
+          document.getElementById("connectedUserBadge").textContent =
+            `Connecté : ${currentUser.nom} (${ROLE_LABELS[currentUser.role] || currentUser.role})`;
+          applyRoleLimits();
+        }
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toastMsg");
+      t.textContent = msg;
+      t.style.display = "block";
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => { t.style.display = "none"; }, 3200);
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("open");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("open");
+    }
+
+    document.querySelectorAll(".modal-backdrop").forEach((m) => {
+      m.addEventListener("click", (e) => {
+        if (e.target === m) m.classList.remove("open");
+      });
+    });
+
+    function allerOnglet(tabName) {
+      const perms = currentUser ? getPermissions(currentUser.role) : FULL_ACCESS_PERMS;
+      const targetTab = perms.tabs.includes(tabName) ? tabName : "dashboard";
+      document.querySelectorAll(".nav-btn").forEach((b) => b.classList.toggle("active", b.dataset.tab === targetTab));
+      document.querySelectorAll(".module-panel").forEach((p) => p.classList.toggle("active", p.id === "tab-" + targetTab));
+    }
+
+    function ouvrirEmpruntsDepuisDashboard() {
+      const emprunteurs = state.tiers.filter((t) => Number(t.avanceDue || 0) > 0);
+      const perms = currentUser ? getPermissions(currentUser.role) : FULL_ACCESS_PERMS;
+      const canOpenAchats = perms.tabs.includes("achats");
+      const titleEl = document.getElementById("detailModalTitle");
+      const bodyEl = document.getElementById("detailModalBody");
+      titleEl.textContent = "Personnes ayant emprunté / avances en cours";
+
+      if (emprunteurs.length === 0) {
+        bodyEl.innerHTML = `<p style="font-size:0.92rem; color:var(--texte-doux); margin-bottom:12px;">Aucune avance / emprunt en cours pour le moment.</p>`;
+      } else {
+        bodyEl.innerHTML = `
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            ${emprunteurs
+              .map(
+                (t) => `<div class="detail-box" style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                  <div>
+                    <strong>${t.nom}</strong>
+                    <div style="font-size:0.8rem; color:var(--texte-doux);">${t.tel || "Sans téléphone"} — ${t.adresse || ""}</div>
+                  </div>
+                  <strong style="color:var(--alerte);">${formatFC(t.avanceDue)}</strong>
+                </div>`
+              )
+              .join("")}
+          </div>`;
+      }
+      if (canOpenAchats) {
+        bodyEl.innerHTML += `
+          <div style="margin-top:14px; text-align:right;">
+            <button type="button" class="btn btn-primary btn-sm" onclick="closeModal('detailModal'); allerOnglet('achats');">
+              Gérer les avances & achats
+            </button>
+          </div>`;
+      }
+      openModal("detailModal");
+    }
+
+    let payingSaleId = null;
+
+    function ouvrirEncaissementVente(id) {
+      const v = state.ventes.find((x) => x.id === id);
+      if (!v) return;
+      const reste = Math.max(0, Number(v.totalFc || 0) - Number(v.payeFc || 0));
+      if (reste <= 0) {
+        showToast("Cette vente est déjà entièrement payée.");
+        return;
+      }
+      payingSaleId = id;
+      document.getElementById("paySaleSummary").innerHTML = `
+        <strong>Client :</strong> ${v.client}<br>
+        <strong>Article :</strong> ${v.produitNom} (${v.qteLabel || v.qte})<br>
+        <strong>Total vente :</strong> ${formatFC(v.totalFc)} | <strong>Reste à payer :</strong> <strong style="color:var(--alerte);">${formatFC(reste)}</strong>
+      `;
+      document.getElementById("paySaleMontant").max = reste;
+      document.getElementById("paySaleMontant").value = reste;
+      document.getElementById("paySaleMode").value = v.mode || "Espèces";
+      openModal("paySaleModal");
+    }
+
+    document.getElementById("paySaleForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!payingSaleId) return;
+      const v = state.ventes.find((x) => x.id === payingSaleId);
+      if (!v) return;
+      const reste = Math.max(0, Number(v.totalFc || 0) - Number(v.payeFc || 0));
+      const montant = Number(document.getElementById("paySaleMontant").value || 0);
+      const mode = document.getElementById("paySaleMode").value;
+
+      if (montant <= 0 || montant > reste) {
+        alert(`Le montant encaissé doit être compris entre 1 FC et ${formatFC(reste)}.`);
+        return;
+      }
+
+      v.payeFc = Number(v.payeFc || 0) + montant;
+      v.mode = mode;
+      v.statutPaiement = v.payeFc >= Number(v.totalFc || 0) ? "paye" : "credit";
+
+      state.caisse.unshift({
+        id: nextId(state.caisse),
+        date: todayStr(),
+        sens: "recette",
+        libelle: `Paiement vente différée — ${v.client} (${v.produitNom})`,
+        mode,
+        montantFc: montant,
+      });
+
+      payingSaleId = null;
+      closeModal("paySaleModal");
+      saveState();
+      renderAll();
+      showToast(`Encaissement de ${formatFC(montant)} ajouté à la caisse.`);
+    });
+
+    function reinitialiserDonnees() {
+      if (!currentUser || !getPermissions(currentUser.role).canResetDemo) {
+        showToast("Action réservée au propriétaire ou technicien.");
+        return;
+      }
+      if (!confirm("Voulez-vous vraiment réinitialiser les données de démonstration ?")) return;
+      state = structuredClone(defaultState);
+      saveState();
+      currentUser = getSessionUser();
+      applyAuthUI();
+      showToast("Données de démonstration réinitialisées.");
+    }
+
+    document.querySelectorAll(".nav-btn").forEach((btn) => {
+      btn.addEventListener("click", () => allerOnglet(btn.dataset.tab));
+    });
+
+    function nextId(list) {
+      return list.reduce((max, item) => Math.max(max, Number(item.id || 0)), 0) + 1;
+    }
+
+    function logStockMove({ date = todayStr(), sens, article, kg, sacsPleins = 0, motif, note = "" }) {
+      state.mouvementsStock.unshift({
+        id: nextId(state.mouvementsStock),
+        date,
+        sens,
+        article,
+        kg: Number(kg || 0),
+        sacsPleins: Number(sacsPleins || 0),
+        motif,
+        note,
+      });
+    }
+
+    function voirDetail(type, id) {
+      const titleEl = document.getElementById("detailModalTitle");
+      const bodyEl = document.getElementById("detailModalBody");
+      let rows = [];
+
+      if (type === "stock_mvt") {
+        const m = state.mouvementsStock.find((x) => x.id === id);
+        if (!m) return;
+        titleEl.textContent = `Détail Mouvement Stock #${m.id}`;
+        rows = [
+          ["Date", m.date],
+          ["Type", m.sens === "entree" ? "Entrée en stock (+)" : "Sortie de stock (-)"],
+          ["Article", ARTICLE_LABELS[m.article] || m.article],
+          ["Quantité", `${m.kg} kg${m.sacsPleins ? ` (${m.sacsPleins} sac(s) plein(s))` : ""}`],
+          ["Motif", m.motif],
+          ["Observation", m.note || "—"],
+        ];
+      } else if (type === "production") {
+        const p = state.productions.find((x) => x.id === id);
+        if (!p) return;
+        titleEl.textContent = `Détail Production #${p.id}`;
+        rows = [
+          ["Date", p.date],
+          ["Produit", p.type === "riz" ? "Riz fini (LOSO YA KILO)" : "Farine de maïs"],
+          ["Matière première entrée", `${p.brutKg} kg`],
+          ["Produit fini obtenu", `${p.finiKg} kg`],
+          ["Conditionnement principal", `${p.sacs25} sacs (25 kg) + ${p.sacs50} sacs (50 kg)`],
+          ["Sous-produit (son)", `${p.sonKg} kg${p.type === "riz" ? ` (${p.sonSacsPleins || 0} sac(s) plein(s))` : " (au kilo)"}`],
+          ["Coût de production", formatFC(p.coutFc)],
+          ["Rendement", p.brutKg > 0 ? ((p.finiKg / p.brutKg) * 100).toFixed(1) + " %" : "—"],
+        ];
+      } else if (type === "usinage") {
+        const u = state.usinages.find((x) => x.id === id);
+        if (!u) return;
+        titleEl.textContent = `Détail Usinage Client #${u.id}`;
+        rows = [
+          ["Date", u.date || todayStr()],
+          ["Client", u.clientNom],
+          ["Produit apporté", u.type === "riz" ? "Riz paddy" : "Maïs"],
+          ["Quantité brute", `${u.brutKg} kg`],
+          ["Produit fini client (hors stock commercial)", `${u.finiKg} kg`],
+          ["Frais d'usinage", formatFC(u.fraisFc)],
+          ["Montant payé", formatFC(u.payeFc)],
+          ["Reste à payer", formatFC(Math.max(0, u.fraisFc - u.payeFc))],
+          ["Statut retrait", u.statutRetrait === "recupere" ? "Récupéré par le client" : "En usine"],
+        ];
+      } else if (type === "avance") {
+        const a = state.avances.find((x) => x.id === id);
+        if (!a) return;
+        titleEl.textContent = `Détail Avance Client #${a.id}`;
+        rows = [
+          ["Date", a.date || todayStr()],
+          ["Client / Fournisseur", a.clientNom],
+          ["Montant accordé", formatFC(a.montantFc)],
+          ["Motif", a.motif || "Avance sur riz"],
+        ];
+      } else if (type === "achat") {
+        const a = state.achats.find((x) => x.id === id);
+        if (!a) return;
+        titleEl.textContent = `Détail Achat de Riz #${a.id}`;
+        rows = [
+          ["Date", a.date || todayStr()],
+          ["Fournisseur / Client", a.clientNom],
+          ["Poids acheté", `${a.poidsKg} kg`],
+          ["Prix unitaire", formatFC(a.prixKg || state.parametres.achat_riz_kg) + "/kg"],
+          ["Montant brut", formatFC(a.brutFc)],
+          ["Avances déduites", formatFC(a.deduitFc)],
+          ["Montant net payé", formatFC(a.netFc)],
+        ];
+      } else if (type === "vente") {
+        const v = state.ventes.find((x) => x.id === id);
+        if (!v) return;
+        const paye = Number(v.payeFc || 0);
+        const reste = Math.max(0, Number(v.totalFc || 0) - paye);
+        titleEl.textContent = `Détail Vente #${v.id}`;
+        rows = [
+          ["Date", v.date || todayStr()],
+          ["Client", v.client],
+          ["Produit", v.produitNom],
+          ["Quantité vendue", v.qteLabel || `${v.qte}`],
+          ["Poids total sorti du stock", `${v.poidsKg} kg`],
+          ["Total vente", formatFC(v.totalFc)],
+          ["Déjà payé / Reste dû", `${formatFC(paye)} / ${formatFC(reste)}`],
+          ["Statut paiement", reste > 0 ? "À payer plus tard (Crédit)" : "Payé"],
+        ];
+      } else if (type === "commande") {
+        const c = state.commandes.find((x) => x.id === id);
+        if (!c) return;
+        titleEl.textContent = `Détail Commande ${c.numero}`;
+        rows = [
+          ["Numéro", c.numero],
+          ["Date", c.date || todayStr()],
+          ["Client", c.client],
+          ["Téléphone", c.tel || "Non renseigné"],
+          ["Article & réception", c.detail],
+          ["Total", formatFC(c.totalFc)],
+          ["Statut actuel", c.statut],
+        ];
+      } else if (type === "caisse") {
+        const m = state.caisse.find((x) => x.id === id);
+        if (!m) return;
+        titleEl.textContent = `Détail Mouvement Caisse #${m.id}`;
+        rows = [
+          ["Date", m.date || todayStr()],
+          ["Nature", m.sens === "recette" ? "Recette (Entrée)" : "Dépense (Sortie)"],
+          ["Libellé", m.libelle],
+          ["Mode de paiement", m.mode],
+          ["Montant", formatFC(m.montantFc)],
+        ];
+      } else if (type === "tiers") {
+        const t = state.tiers.find((x) => x.id === id);
+        if (!t) return;
+        titleEl.textContent = `Fiche Contact — ${t.nom}`;
+        rows = [
+          ["Nom", t.nom],
+          ["Téléphone", t.tel || "—"],
+          ["Adresse", t.adresse || "—"],
+          ["Solde d'avances dues", formatFC(t.avanceDue)],
+        ];
+      } else if (type === "utilisateur") {
+        const u = state.utilisateurs.find((x) => x.id === id);
+        if (!u) return;
+        titleEl.textContent = `Compte Utilisateur — ${u.nom}`;
+        rows = [
+          ["Nom complet", u.nom],
+          ["Téléphone", u.tel],
+          ["Email", u.email || "—"],
+          ["Rôle", ROLE_LABELS[u.role] || u.role],
+          ["Statut", u.actif ? "Actif" : "Désactivé"],
+        ];
+      }
+
+      bodyEl.innerHTML = `<div class="detail-grid">${rows
+        .map(([k, v]) => `<div class="detail-box"><span>${k}</span><strong>${v}</strong></div>`)
+        .join("")}</div>`;
+      openModal("detailModal");
+    }
+
+    let currentEdit = null;
+
+    function ouvrirModification(type, id) {
+      if (!currentUser || !getPermissions(currentUser.role).canEdit) {
+        showToast("Votre poste ne permet pas de modifier cet enregistrement.");
+        return;
+      }
+      currentEdit = { type, id };
+      const titleEl = document.getElementById("editModalTitle");
+      const fieldsEl = document.getElementById("editModalFields");
+
+      if (type === "stock_mvt") {
+        const m = state.mouvementsStock.find((x) => x.id === id);
+        if (!m) return;
+        titleEl.textContent = `Modifier Mouvement Stock #${m.id}`;
+        fieldsEl.innerHTML = `
+          <div class="form-row">
+            <div class="form-group"><label>Date</label><input type="date" id="edDate" value="${m.date}" required /></div>
+            <div class="form-group"><label>Quantité (kg)</label><input type="number" id="edKg" step="0.5" min="0.5" value="${m.kg}" required /></div>
+          </div>
+          <div class="form-group"><label>Sacs pleins (si son de riz)</label><input type="number" id="edSacs" min="0" value="${m.sacsPleins || 0}" /></div>
+          <div class="form-group"><label>Motif</label><input type="text" id="edMotif" value="${m.motif}" required /></div>
+          <div class="form-group"><label>Observation</label><input type="text" id="edNote" value="${m.note || ""}" /></div>`;
+      } else if (type === "production") {
+        const p = state.productions.find((x) => x.id === id);
+        if (!p) return;
+        titleEl.textContent = `Modifier Production #${p.id}`;
+        fieldsEl.innerHTML = `
+          <div class="form-group"><label>Date</label><input type="date" id="edDate" value="${p.date}" required /></div>
+          <div class="form-row">
+            <div class="form-group"><label>Matière première (kg)</label><input type="number" id="edBrut" step="0.1" value="${p.brutKg}" required /></div>
+            <div class="form-group"><label>Produit fini obtenu (kg)</label><input type="number" id="edFini" step="0.1" value="${p.finiKg}" required /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Sacs 25 kg</label><input type="number" id="edS25" value="${p.sacs25}" /></div>
+            <div class="form-group"><label>Sacs 50 kg</label><input type="number" id="edS50" value="${p.sacs50}" /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Sous-produit / son (kg)</label><input type="number" id="edSon" step="0.1" value="${p.sonKg}" /></div>
+            <div class="form-group"><label>Sacs pleins son de riz</label><input type="number" id="edSonSacs" value="${p.sonSacsPleins || 0}" /></div>
+          </div>
+          <div class="form-group"><label>Coût de production (FC)</label><input type="number" id="edCout" value="${p.coutFc}" /></div>`;
+      } else if (type === "usinage") {
+        const u = state.usinages.find((x) => x.id === id);
+        if (!u) return;
+        titleEl.textContent = `Modifier Usinage #${u.id} (${u.clientNom})`;
+        fieldsEl.innerHTML = `
+          <div class="form-row">
+            <div class="form-group"><label>Quantité brute (kg)</label><input type="number" id="edBrut" step="0.1" value="${u.brutKg}" required /></div>
+            <div class="form-group"><label>Produit fini client (kg)</label><input type="number" id="edFini" step="0.1" value="${u.finiKg}" required /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Frais d'usinage (FC)</label><input type="number" id="edFrais" value="${u.fraisFc}" required /></div>
+            <div class="form-group"><label>Montant payé (FC)</label><input type="number" id="edPaye" value="${u.payeFc}" required /></div>
+          </div>
+          <div class="form-group"><label>Statut retrait</label>
+            <select id="edRetrait">
+              <option value="en_usine" ${u.statutRetrait === "en_usine" ? "selected" : ""}>En usine</option>
+              <option value="recupere" ${u.statutRetrait === "recupere" ? "selected" : ""}>Récupéré par le client</option>
+            </select>
+          </div>`;
+      } else if (type === "avance") {
+        const a = state.avances.find((x) => x.id === id);
+        if (!a) return;
+        titleEl.textContent = `Modifier Avance #${a.id} (${a.clientNom})`;
+        fieldsEl.innerHTML = `
+          <div class="form-group"><label>Montant de l'avance (FC)</label><input type="number" id="edMontant" min="1" value="${a.montantFc}" required /></div>
+          <div class="form-group"><label>Motif</label><input type="text" id="edMotif" value="${a.motif || ""}" required /></div>`;
+      } else if (type === "achat") {
+        const a = state.achats.find((x) => x.id === id);
+        if (!a) return;
+        titleEl.textContent = `Modifier Achat de riz #${a.id} (${a.clientNom})`;
+        fieldsEl.innerHTML = `
+          <div class="form-row">
+            <div class="form-group"><label>Poids acheté (kg)</label><input type="number" id="edPoids" step="0.1" min="1" value="${a.poidsKg}" required /></div>
+            <div class="form-group"><label>Prix unitaire / kg (FC)</label><input type="number" id="edPrixKg" min="1" value="${a.prixKg || state.parametres.achat_riz_kg}" required /></div>
+          </div>
+          <div class="form-group"><label>Avances déduites (FC)</label><input type="number" id="edDeduit" min="0" value="${a.deduitFc}" required /></div>`;
+      } else if (type === "vente") {
+        const v = state.ventes.find((x) => x.id === id);
+        if (!v) return;
+        titleEl.textContent = `Modifier Vente #${v.id}`;
+        fieldsEl.innerHTML = `
+          <div class="form-group"><label>Nom du client</label><input type="text" id="edClient" value="${v.client}" required /></div>
+          <div class="form-row">
+            <div class="form-group"><label>Quantité (sacs ou kg)</label><input type="number" id="edQte" step="0.5" min="1" value="${v.qte}" required /></div>
+            <div class="form-group"><label>Poids total sorti (kg)</label><input type="number" id="edPoidsKg" step="0.5" min="1" value="${v.poidsKg}" required /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Total vente (FC)</label><input type="number" id="edTotal" min="0" value="${v.totalFc}" required /></div>
+            <div class="form-group"><label>Montant déjà payé (FC)</label><input type="number" id="edPaye" min="0" value="${v.payeFc ?? v.totalFc}" required /></div>
+          </div>`;
+      } else if (type === "commande") {
+        const c = state.commandes.find((x) => x.id === id);
+        if (!c) return;
+        titleEl.textContent = `Modifier Commande ${c.numero}`;
+        fieldsEl.innerHTML = `
+          <div class="form-row">
+            <div class="form-group"><label>Client</label><input type="text" id="edClient" value="${c.client}" required /></div>
+            <div class="form-group"><label>Téléphone</label><input type="text" id="edTel" value="${c.tel || ""}" /></div>
+          </div>
+          <div class="form-group"><label>Détail commande</label><input type="text" id="edDetail" value="${c.detail}" required /></div>
+          <div class="form-row">
+            <div class="form-group"><label>Montant total (FC)</label><input type="number" id="edTotal" value="${c.totalFc}" required /></div>
+            <div class="form-group"><label>Statut</label>
+              <select id="edStatut">
+                ${["Nouvelle commande", "Confirmée", "En préparation", "En livraison", "Livrée", "Annulée"]
+                  .map((s) => `<option value="${s}" ${c.statut === s ? "selected" : ""}>${s}</option>`)
+                  .join("")}
+              </select>
+            </div>
+          </div>`;
+      } else if (type === "caisse") {
+        const m = state.caisse.find((x) => x.id === id);
+        if (!m) return;
+        titleEl.textContent = `Modifier Mouvement Caisse #${m.id}`;
+        fieldsEl.innerHTML = `
+          <div class="form-group"><label>Type</label>
+            <select id="edSens">
+              <option value="recette" ${m.sens === "recette" ? "selected" : ""}>Recette</option>
+              <option value="depense" ${m.sens === "depense" ? "selected" : ""}>Dépense</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Libellé</label><input type="text" id="edLibelle" value="${m.libelle}" required /></div>
+          <div class="form-row">
+            <div class="form-group"><label>Mode</label><input type="text" id="edMode" value="${m.mode}" required /></div>
+            <div class="form-group"><label>Montant (FC)</label><input type="number" id="edMontant" min="1" value="${m.montantFc}" required /></div>
+          </div>`;
+      } else if (type === "tiers") {
+        const t = state.tiers.find((x) => x.id === id);
+        if (!t) return;
+        titleEl.textContent = `Modifier Contact — ${t.nom}`;
+        fieldsEl.innerHTML = `
+          <div class="form-group"><label>Nom complet</label><input type="text" id="edNom" value="${t.nom}" required /></div>
+          <div class="form-row">
+            <div class="form-group"><label>Téléphone</label><input type="text" id="edTel" value="${t.tel || ""}" /></div>
+            <div class="form-group"><label>Adresse</label><input type="text" id="edAdresse" value="${t.adresse || ""}" /></div>
+          </div>`;
+      } else if (type === "utilisateur") {
+        const u = state.utilisateurs.find((x) => x.id === id);
+        if (!u) return;
+        titleEl.textContent = `Modifier Compte Utilisateur — ${u.nom}`;
+        fieldsEl.innerHTML = `
+          <div class="form-group"><label>Nom complet</label><input type="text" id="edNom" value="${u.nom}" required /></div>
+          <div class="form-row">
+            <div class="form-group"><label>Téléphone</label><input type="text" id="edTel" value="${u.tel}" required /></div>
+            <div class="form-group"><label>Email</label><input type="email" id="edEmail" value="${u.email || ""}" /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Rôle</label>
+              <select id="edRole">
+                ${Object.entries(ROLE_LABELS)
+                  .map(([k, lbl]) => `<option value="${k}" ${u.role === k ? "selected" : ""}>${lbl}</option>`)
+                  .join("")}
+              </select>
+            </div>
+            <div class="form-group"><label>Statut du compte</label>
+              <select id="edActif">
+                <option value="1" ${u.actif ? "selected" : ""}>Actif</option>
+                <option value="0" ${!u.actif ? "selected" : ""}>Désactivé</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group"><label>Nouveau mot de passe (laisser vide pour conserver)</label><input type="password" id="edPass" minlength="6" placeholder="••••••" /></div>`;
+      }
+
+      openModal("editModal");
+    }
+
+    document.getElementById("editModalForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!currentEdit) return;
+      const { type, id } = currentEdit;
+
+      if (type === "stock_mvt") {
+        const m = state.mouvementsStock.find((x) => x.id === id);
+        if (!m) return;
+        const oldKg = Number(m.kg || 0);
+        const oldSacs = Number(m.sacsPleins || 0);
+        const newKg = Number(document.getElementById("edKg").value);
+        const newSacs = Number(document.getElementById("edSacs").value || 0);
+        const deltaKg = m.sens === "entree" ? (newKg - oldKg) : (oldKg - newKg);
+        const deltaSacs = m.sens === "entree" ? (newSacs - oldSacs) : (oldSacs - newSacs);
+
+        state.stocks[m.article] = Math.max(0, Number(state.stocks[m.article] || 0) + deltaKg);
+        if (m.article === "son_riz") {
+          state.stocks.son_riz_sacs_pleins = Math.max(0, Number(state.stocks.son_riz_sacs_pleins || 0) + deltaSacs);
+        }
+        m.date = document.getElementById("edDate").value;
+        m.kg = newKg;
+        m.sacsPleins = newSacs;
+        m.motif = document.getElementById("edMotif").value.trim();
+        m.note = document.getElementById("edNote").value.trim();
+      } else if (type === "production") {
+        const p = state.productions.find((x) => x.id === id);
+        if (!p) return;
+        const oldFini = Number(p.finiKg || 0);
+        const oldSon = Number(p.sonKg || 0);
+        const oldSonSacs = Number(p.sonSacsPleins || 0);
+        const newFini = Number(document.getElementById("edFini").value);
+        const newSon = Number(document.getElementById("edSon").value || 0);
+        const newSonSacs = Number(document.getElementById("edSonSacs").value || 0);
+        const articleFini = p.type === "riz" ? "riz_fini" : "farine_mais";
+        const articleSon = p.type === "riz" ? "son_riz" : "son_mais";
+
+        state.stocks[articleFini] = Math.max(0, state.stocks[articleFini] - oldFini + newFini);
+        state.stocks[articleSon] = Math.max(0, state.stocks[articleSon] - oldSon + newSon);
+        if (p.type === "riz") {
+          state.stocks.son_riz_sacs_pleins = Math.max(0, (state.stocks.son_riz_sacs_pleins || 0) - oldSonSacs + newSonSacs);
+        }
+
+        p.date = document.getElementById("edDate").value;
+        p.brutKg = Number(document.getElementById("edBrut").value);
+        p.finiKg = newFini;
+        p.sacs25 = Number(document.getElementById("edS25").value || 0);
+        p.sacs50 = Number(document.getElementById("edS50").value || 0);
+        p.sonKg = newSon;
+        p.sonSacsPleins = newSonSacs;
+        p.coutFc = Number(document.getElementById("edCout").value || 0);
+      } else if (type === "usinage") {
+        const u = state.usinages.find((x) => x.id === id);
+        if (!u) return;
+        const newFrais = Number(document.getElementById("edFrais").value);
+        const newPaye = Number(document.getElementById("edPaye").value);
+        const newRetrait = document.getElementById("edRetrait").value;
+        if (newRetrait === "recupere" && newPaye < newFrais) {
+          alert("Le client doit solder les frais d'usinage avant le retrait.");
+          return;
+        }
+        u.brutKg = Number(document.getElementById("edBrut").value);
+        u.finiKg = Number(document.getElementById("edFini").value);
+        u.fraisFc = newFrais;
+        u.payeFc = newPaye;
+        u.statutRetrait = newRetrait;
+      } else if (type === "avance") {
+        const a = state.avances.find((x) => x.id === id);
+        if (!a) return;
+        const oldMontant = Number(a.montantFc || 0);
+        const newMontant = Number(document.getElementById("edMontant").value);
+        const tiers = state.tiers.find((t) => t.id === a.clientId);
+        if (tiers) {
+          tiers.avanceDue = Math.max(0, tiers.avanceDue - oldMontant + newMontant);
+        }
+        a.montantFc = newMontant;
+        a.motif = document.getElementById("edMotif").value.trim();
+      } else if (type === "achat") {
+        const a = state.achats.find((x) => x.id === id);
+        if (!a) return;
+        const oldPoids = Number(a.poidsKg || 0);
+        const newPoids = Number(document.getElementById("edPoids").value);
+        const newPrix = Number(document.getElementById("edPrixKg").value);
+        const newDeduit = Number(document.getElementById("edDeduit").value || 0);
+        state.stocks.riz_fini = Math.max(0, state.stocks.riz_fini - oldPoids + newPoids);
+        a.poidsKg = newPoids;
+        a.prixKg = newPrix;
+        a.brutFc = newPoids * newPrix;
+        a.deduitFc = newDeduit;
+        a.netFc = Math.max(0, a.brutFc - newDeduit);
+      } else if (type === "vente") {
+        const v = state.ventes.find((x) => x.id === id);
+        if (!v) return;
+        const oldKg = Number(v.poidsKg || 0);
+        const newQte = Number(document.getElementById("edQte").value);
+        const newKg = Number(document.getElementById("edPoidsKg").value);
+        const newTotal = Number(document.getElementById("edTotal").value);
+        const newPaye = Math.min(newTotal, Math.max(0, Number(document.getElementById("edPaye").value || 0)));
+        if (v.articleKey && state.stocks[v.articleKey] !== undefined) {
+          state.stocks[v.articleKey] = Math.max(0, state.stocks[v.articleKey] + oldKg - newKg);
+        }
+        v.client = document.getElementById("edClient").value.trim();
+        v.qte = newQte;
+        v.poidsKg = newKg;
+        v.qteLabel = v.codeProduit === "son_mais_kg"
+          ? `${newQte} kg`
+          : (v.codeProduit === "son_riz_sac" ? `${newQte} sac(s) plein(s) (${newKg} kg)` : `${newQte} sac(s)`);
+        v.totalFc = newTotal;
+        v.payeFc = newPaye;
+        v.statutPaiement = newPaye >= newTotal ? "paye" : "credit";
+      } else if (type === "commande") {
+        const c = state.commandes.find((x) => x.id === id);
+        if (!c) return;
+        c.client = document.getElementById("edClient").value.trim();
+        c.tel = document.getElementById("edTel").value.trim();
+        c.detail = document.getElementById("edDetail").value.trim();
+        c.totalFc = Number(document.getElementById("edTotal").value);
+        c.statut = document.getElementById("edStatut").value;
+      } else if (type === "caisse") {
+        const m = state.caisse.find((x) => x.id === id);
+        if (!m) return;
+        m.sens = document.getElementById("edSens").value;
+        m.libelle = document.getElementById("edLibelle").value.trim();
+        m.mode = document.getElementById("edMode").value.trim();
+        m.montantFc = Number(document.getElementById("edMontant").value);
+      } else if (type === "tiers") {
+        const t = state.tiers.find((x) => x.id === id);
+        if (!t) return;
+        t.nom = document.getElementById("edNom").value.trim();
+        t.tel = document.getElementById("edTel").value.trim();
+        t.adresse = document.getElementById("edAdresse").value.trim();
+      } else if (type === "utilisateur") {
+        const u = state.utilisateurs.find((x) => x.id === id);
+        if (!u) return;
+        u.nom = document.getElementById("edNom").value.trim();
+        u.tel = document.getElementById("edTel").value.trim();
+        u.email = document.getElementById("edEmail").value.trim();
+        u.role = document.getElementById("edRole").value;
+        u.actif = document.getElementById("edActif").value === "1";
+        const newPass = document.getElementById("edPass").value;
+        if (newPass) u.password = hashPass(newPass);
+      }
+
+      saveState();
+      renderAll();
+      closeModal("editModal");
+      showToast("Modification enregistrée avec succès.");
+    });
+
+    let pendingDelete = null;
+
+    function describeDeleteItem(type, id) {
+      if (type === "stock_mvt") {
+        const m = state.mouvementsStock.find((x) => x.id === id);
+        if (m) return `${m.sens === "entree" ? "Entrée" : "Sortie"} stock — ${ARTICLE_LABELS[m.article] || m.article} (${m.kg} kg)`;
+      } else if (type === "vente") {
+        const v = state.ventes.find((x) => x.id === id);
+        if (v) return `Vente — ${v.client} (${v.produitNom}, ${v.qteLabel || v.qte}, ${formatFC(v.totalFc)})`;
+      } else if (type === "production") {
+        const p = state.productions.find((x) => x.id === id);
+        if (p) return `Production #${p.id} — ${p.finiKg} kg (${p.date})`;
+      } else if (type === "usinage") {
+        const u = state.usinages.find((x) => x.id === id);
+        if (u) return `Usinage #${u.id} — ${u.clientNom} (${u.finiKg} kg)`;
+      } else if (type === "avance") {
+        const a = state.avances.find((x) => x.id === id);
+        if (a) return `Avance #${a.id} — ${a.clientNom} (${formatFC(a.montantFc)})`;
+      } else if (type === "achat") {
+        const a = state.achats.find((x) => x.id === id);
+        if (a) return `Achat riz #${a.id} — ${a.clientNom} (${a.poidsKg} kg)`;
+      } else if (type === "commande") {
+        const c = state.commandes.find((x) => x.id === id);
+        if (c) return `Commande ${c.numero} — ${c.client} (${formatFC(c.totalFc)})`;
+      } else if (type === "caisse") {
+        const m = state.caisse.find((x) => x.id === id);
+        if (m) return `${m.sens === "recette" ? "Recette" : "Dépense"} — ${m.libelle} (${formatFC(m.montantFc)})`;
+      } else if (type === "tiers") {
+        const t = state.tiers.find((x) => x.id === id);
+        if (t) return `Contact — ${t.nom}`;
+      } else if (type === "utilisateur") {
+        const u = state.utilisateurs.find((x) => x.id === id);
+        if (u) return `Compte — ${u.nom} (${ROLE_LABELS[u.role] || u.role})`;
+      }
+      return `Enregistrement #${id}`;
+    }
+
+    function supprimerElement(type, id) {
+      if (!currentUser || !getPermissions(currentUser.role).canDelete) {
+        showToast("Suppression réservée au propriétaire ou technicien.");
+        return;
+      }
+      pendingDelete = { type, id };
+      document.getElementById("confirmDeleteMeta").textContent = describeDeleteItem(type, id);
+      openModal("confirmDeleteModal");
+    }
+
+    document.getElementById("btnConfirmDeleteExec").addEventListener("click", () => {
+      if (!pendingDelete) return;
+      const { type, id } = pendingDelete;
+      pendingDelete = null;
+      closeModal("confirmDeleteModal");
+
+      if (type === "stock_mvt") {
+        const idx = state.mouvementsStock.findIndex((x) => x.id === id);
+        if (idx === -1) return;
+        const m = state.mouvementsStock[idx];
+        if (m.sens === "entree") {
+          state.stocks[m.article] = Math.max(0, Number(state.stocks[m.article] || 0) - Number(m.kg || 0));
+          if (m.article === "son_riz") {
+            state.stocks.son_riz_sacs_pleins = Math.max(0, Number(state.stocks.son_riz_sacs_pleins || 0) - Number(m.sacsPleins || 0));
+          }
+        } else {
+          state.stocks[m.article] = Number(state.stocks[m.article] || 0) + Number(m.kg || 0);
+          if (m.article === "son_riz") {
+            state.stocks.son_riz_sacs_pleins = Number(state.stocks.son_riz_sacs_pleins || 0) + Number(m.sacsPleins || 0);
+          }
+        }
+        state.mouvementsStock.splice(idx, 1);
+      } else if (type === "production") {
+        const idx = state.productions.findIndex((x) => x.id === id);
+        if (idx === -1) return;
+        const p = state.productions[idx];
+        const articleFini = p.type === "riz" ? "riz_fini" : "farine_mais";
+        const articleSon = p.type === "riz" ? "son_riz" : "son_mais";
+        state.stocks[articleFini] = Math.max(0, state.stocks[articleFini] - Number(p.finiKg || 0));
+        state.stocks[articleSon] = Math.max(0, state.stocks[articleSon] - Number(p.sonKg || 0));
+        if (p.type === "riz") {
+          state.stocks.son_riz_sacs_pleins = Math.max(0, (state.stocks.son_riz_sacs_pleins || 0) - Number(p.sonSacsPleins || 0));
+        }
+        state.productions.splice(idx, 1);
+      } else if (type === "usinage") {
+        state.usinages = state.usinages.filter((x) => x.id !== id);
+      } else if (type === "avance") {
+        const idx = state.avances.findIndex((x) => x.id === id);
+        if (idx === -1) return;
+        const a = state.avances[idx];
+        const tiers = state.tiers.find((t) => t.id === a.clientId);
+        if (tiers) {
+          tiers.avanceDue = Math.max(0, tiers.avanceDue - Number(a.montantFc || 0));
+        }
+        state.avances.splice(idx, 1);
+      } else if (type === "achat") {
+        const idx = state.achats.findIndex((x) => x.id === id);
+        if (idx === -1) return;
+        const a = state.achats[idx];
+        state.stocks.riz_fini = Math.max(0, state.stocks.riz_fini - Number(a.poidsKg || 0));
+        state.achats.splice(idx, 1);
+      } else if (type === "vente") {
+        const idx = state.ventes.findIndex((x) => x.id === id);
+        if (idx === -1) return;
+        const v = state.ventes[idx];
+        if (v.articleKey && state.stocks[v.articleKey] !== undefined) {
+          state.stocks[v.articleKey] += Number(v.poidsKg || 0);
+        }
+        if (v.codeProduit === "son_riz_sac") {
+          state.stocks.son_riz_sacs_pleins = (state.stocks.son_riz_sacs_pleins || 0) + Number(v.sacsPleins || v.qte || 0);
+        }
+        state.ventes.splice(idx, 1);
+      } else if (type === "commande") {
+        state.commandes = state.commandes.filter((x) => x.id !== id);
+      } else if (type === "caisse") {
+        state.caisse = state.caisse.filter((x) => x.id !== id);
+      } else if (type === "tiers") {
+        state.tiers = state.tiers.filter((x) => x.id !== id);
+      } else if (type === "utilisateur") {
+        if (state.utilisateurs.length <= 1) {
+          showToast("Impossible de supprimer le dernier compte administrateur.");
+          return;
+        }
+        if (currentUser && Number(currentUser.id) === Number(id)) {
+          showToast("Impossible de supprimer le compte actuellement connecté.");
+          return;
+        }
+        state.utilisateurs = state.utilisateurs.filter((x) => x.id !== id);
+      }
+
+      saveState();
+      renderAll();
+      showToast("Enregistrement supprimé.");
+    });
+
+    function actionButtons(type, id, extraHtml = "") {
+      const perms = currentUser ? getPermissions(currentUser.role) : FULL_ACCESS_PERMS;
+      const editBtn = perms.canEdit
+        ? `<button type="button" class="btn btn-sm btn-edit" onclick="ouvrirModification('${type}', ${id})">Modifier</button>`
+        : "";
+      const delBtn = perms.canDelete
+        ? `<button type="button" class="btn btn-sm btn-del" onclick="supprimerElement('${type}', ${id})">Supprimer</button>`
+        : "";
+      return `
+        <div class="actions-cell">
+          ${extraHtml}
+          <button type="button" class="btn btn-sm btn-detail" onclick="voirDetail('${type}', ${id})">Détail</button>
+          ${editBtn}
+          ${delBtn}
+        </div>
+      `;
+    }
+
+    const stkArticleEl = document.getElementById("stkArticle");
+    const stkSacs25El = document.getElementById("stkSacs25");
+    const stkSacs50El = document.getElementById("stkSacs50");
+    const stkKgLibresEl = document.getElementById("stkKgLibres");
+    const stkKgEl = document.getElementById("stkKg");
+    const stkTotalPreviewEl = document.getElementById("stkTotalPreview");
+    const stkSacsPleinsGroup = document.getElementById("stkSacsPleinsGroup");
+    document.getElementById("stkDate").value = todayStr();
+
+    function calculerTotalStockForm() {
+      const s25 = Math.max(0, Number(stkSacs25El.value || 0));
+      const s50 = Math.max(0, Number(stkSacs50El.value || 0));
+      const kgLibres = Math.max(0, Number(stkKgLibresEl.value || 0));
+      const totalKg = (s25 * 25) + (s50 * 50) + kgLibres;
+      stkKgEl.value = totalKg;
+      stkTotalPreviewEl.innerHTML =
+        `Total calculé : <strong>${totalKg} kg</strong> (${s25} sac(s) de 25 kg + ${s50} sac(s) de 50 kg + ${kgLibres} kg)`;
+      return { s25, s50, kgLibres, totalKg };
+    }
+
+    [stkSacs25El, stkSacs50El, stkKgLibresEl].forEach((inp) => {
+      inp.addEventListener("input", calculerTotalStockForm);
+      inp.addEventListener("change", calculerTotalStockForm);
+    });
+
+    stkKgEl.addEventListener("input", () => {
+      const totalDirect = Math.max(0, Number(stkKgEl.value || 0));
+      stkTotalPreviewEl.innerHTML =
+        `Total saisi : <strong>${totalDirect} kg</strong>`;
+    });
+
+    stkArticleEl.addEventListener("change", () => {
+      stkSacsPleinsGroup.style.display = stkArticleEl.value === "son_riz" ? "block" : "none";
+    });
+    document.getElementById("filtreStockSens").addEventListener("change", renderAll);
+    document.getElementById("filtreVenteStatut").addEventListener("change", renderAll);
+
+    const venProduitEl = document.getElementById("venProduit");
+    const venQteEl = document.getElementById("venQte");
+    const venPoidsReelGroup = document.getElementById("venPoidsReelGroup");
+    const venPoidsReelEl = document.getElementById("venPoidsReel");
+    const venPrixUnitEl = document.getElementById("venPrixUnit");
+    const venStatutPaiementEl = document.getElementById("venStatutPaiement");
+    const venQteLabel = document.getElementById("venQteLabel");
+    const ventePreviewEl = document.getElementById("ventePreview");
+
+    function syncVenteForm(resetPrice = true) {
+      const opt = venProduitEl.options[venProduitEl.selectedIndex];
+      const unite = opt.dataset.unite || "sac";
+
+      if (resetPrice) {
+        venPrixUnitEl.value = opt.dataset.prix || 0;
+      }
+
+      if (unite === "son_riz_sac" || unite === "sac_plein") {
+        venQteLabel.textContent = "Nombre de sacs pleins";
+        venQteEl.step = "1";
+        venPoidsReelGroup.style.display = "block";
+        if (resetPrice) {
+          venPoidsReelEl.value = Number(venQteEl.value || 1) * 110;
+        }
+      } else if (unite === "kg") {
+        venQteLabel.textContent = "Poids vendu en kilogrammes (kg — libre)";
+        venQteEl.step = "0.5";
+        venPoidsReelGroup.style.display = "none";
+      } else {
+        venQteLabel.textContent = "Quantité (sacs)";
+        venQteEl.step = "1";
+        venPoidsReelGroup.style.display = "none";
+      }
+
+      const qte = Number(venQteEl.value || 1);
+      const prixUnit = Number(venPrixUnitEl.value || 0);
+      const total = qte * prixUnit;
+      const poidsSorti = unite === "sac_plein"
+        ? Number(venPoidsReelEl.value || 0)
+        : (unite === "kg" ? qte : qte * Number(opt.dataset.kg || 25));
+      const statutTxt = venStatutPaiementEl.value === "credit"
+        ? '<span style="color:var(--alerte); font-weight:700;">À payer plus tard (pas encore en caisse)</span>'
+        : '<span style="color:var(--succes); font-weight:700;">Payé comptant (ajouté à la caisse)</span>';
+
+      ventePreviewEl.innerHTML =
+        `Total vente : <strong>${formatFC(total)}</strong> | Sortie stock : <strong>${poidsSorti} kg</strong> | ${statutTxt}`;
+    }
+
+    venProduitEl.addEventListener("change", () => syncVenteForm(true));
+    venStatutPaiementEl.addEventListener("change", () => syncVenteForm(false));
+    venQteEl.addEventListener("input", () => {
+      const opt = venProduitEl.options[venProduitEl.selectedIndex];
+      if ((opt.dataset.unite || "") === "sac_plein") {
+        venPoidsReelEl.value = Number(venQteEl.value || 1) * 110;
+      }
+      syncVenteForm(false);
+    });
+    venPoidsReelEl.addEventListener("input", () => syncVenteForm(false));
+    venPrixUnitEl.addEventListener("input", () => syncVenteForm(false));
+
+    function renderAll() {
+      document.getElementById("kpiStockRiz").textContent = state.stocks.riz_fini + " kg";
+      document.getElementById("kpiStockMais").textContent = state.stocks.farine_mais + " kg";
+
+      const recettes = state.caisse.filter((m) => m.sens === "recette").reduce((s, m) => s + Number(m.montantFc), 0);
+      const depenses = state.caisse.filter((m) => m.sens === "depense").reduce((s, m) => s + Number(m.montantFc), 0);
+      const solde = recettes - depenses;
+      const creditsVentes = state.ventes.reduce((s, v) => s + Math.max(0, Number(v.totalFc || 0) - Number(v.payeFc ?? v.totalFc)), 0);
+      const emprunteurs = state.tiers.filter((t) => Number(t.avanceDue || 0) > 0);
+      const totalAvances = emprunteurs.reduce((s, t) => s + Number(t.avanceDue || 0), 0);
+      const stockClients = state.usinages.filter((u) => u.statutRetrait === "en_usine").reduce((s, u) => s + Number(u.finiKg), 0);
+
+      document.getElementById("kpiCaisse").textContent = formatFC(solde);
+      document.getElementById("kpiAvances").textContent = formatFC(totalAvances);
+      document.getElementById("statRecettes").textContent = formatFC(recettes);
+      document.getElementById("statCreditsVentes").textContent = formatFC(creditsVentes);
+      document.getElementById("statDepenses").textContent = formatFC(depenses);
+      document.getElementById("statBenefice").textContent = formatFC(solde);
+      document.getElementById("statEmpruntsMontant").textContent = formatFC(totalAvances);
+      document.getElementById("statEmprunteursDetail").textContent =
+        emprunteurs.length > 0
+          ? `${emprunteurs.length} personne(s) : ${emprunteurs.map((e) => e.nom).join(", ")}`
+          : "0 personne avec avance en cours";
+      document.getElementById("statStockClients").textContent = stockClients + " kg";
+
+      const cmdAttente = state.commandes.filter((c) => c.statut !== "Livrée" && c.statut !== "Annulée").length;
+      const cmdLivrees = state.commandes.filter((c) => c.statut === "Livrée").length;
+      document.getElementById("statCommandes").textContent = `${cmdAttente} / ${cmdLivrees}`;
+      document.getElementById("statComptes").textContent = state.utilisateurs.filter((u) => u.actif).length;
+
+      const stockRows = [
+        ["Riz fini (LOSO YA KILO)", state.stocks.riz_fini, `${Math.floor(state.stocks.riz_fini / 25)} sacs (25 kg) / ${Math.floor(state.stocks.riz_fini / 50)} sacs (50 kg)`],
+        ["Farine de maïs", state.stocks.farine_mais, `${Math.floor(state.stocks.farine_mais / 25)} sacs (25 kg) / ${Math.floor(state.stocks.farine_mais / 50)} sacs (50 kg)`],
+        ["Son de riz (par sac plein)", state.stocks.son_riz, `${state.stocks.son_riz_sacs_pleins || 0} sac(s) plein(s) (100/120 kg env.)`],
+        ["Son de maïs (au kilo)", state.stocks.son_mais, `Vente libre au kilo (${state.stocks.son_mais} kg)`],
+      ];
+      document.getElementById("tableStocksBody").innerHTML = stockRows
+        .map(
+          ([nom, kg, cond]) =>
+            `<tr><td>${nom}</td><td><strong>${kg} kg</strong></td><td>${cond}</td></tr>`
+        )
+        .join("");
+
+      const stockDetailRows = [
+        ...stockRows,
+        ["Matière première — Riz paddy", state.stocks.matiere_paddy || 0, "Stock brut usine"],
+        ["Matière première — Maïs grain", state.stocks.matiere_mais || 0, "Stock brut usine"],
+      ];
+      document.getElementById("tableStocksDetailBody").innerHTML = stockDetailRows
+        .map(
+          ([nom, kg, cond]) =>
+            `<tr><td>${nom}</td><td><strong>${kg} kg</strong></td><td>${cond}</td></tr>`
+        )
+        .join("");
+
+      const filtreSens = document.getElementById("filtreStockSens").value;
+      const mvtsFiltered = state.mouvementsStock.filter((m) => filtreSens === "tous" || m.sens === filtreSens);
+      document.getElementById("tableMouvementsStockBody").innerHTML = mvtsFiltered
+        .map(
+          (m) => `<tr>
+            <td>${m.date}</td>
+            <td>${m.sens === "entree" ? '<span class="badge badge-ok">Entrée (+)</span>' : '<span class="badge badge-err">Sortie (-)</span>'}</td>
+            <td>${ARTICLE_LABELS[m.article] || m.article}</td>
+            <td><strong>${m.kg} kg</strong>${m.sacsPleins ? ` (${m.sacsPleins} sac(s) plein(s))` : ""}</td>
+            <td>${m.motif}${m.note ? " — " + m.note : ""}</td>
+            <td>${actionButtons("stock_mvt", m.id)}</td>
+          </tr>`
+        )
+        .join("");
+
+      const datalistEl = document.getElementById("tiersDatalist");
+      if (datalistEl) {
+        datalistEl.innerHTML = state.tiers
+          .map((t) => `<option value="${t.nom}"></option>`)
+          .join("");
+      }
+
+      document.getElementById("tableProductionBody").innerHTML = state.productions
+        .map(
+          (p) => `<tr>
+            <td>${p.date}</td>
+            <td>${p.type === "riz" ? "Riz fini" : "Farine de maïs"}</td>
+            <td><strong>${p.finiKg} kg</strong></td>
+            <td>${p.sonKg} kg${p.type === "riz" ? ` (${p.sonSacsPleins || 0} sac(s) plein(s))` : " (kg)"}</td>
+            <td>${formatFC(p.coutFc)}</td>
+            <td>${actionButtons("production", p.id)}</td>
+          </tr>`
+        )
+        .join("");
+
+      document.getElementById("tableUsinageBody").innerHTML = state.usinages
+        .map(
+          (u) => `<tr>
+            <td>${u.clientNom}</td>
+            <td><strong>${u.finiKg} kg</strong></td>
+            <td>${formatFC(u.fraisFc)} / ${formatFC(u.payeFc)}</td>
+            <td>${
+              u.statutRetrait === "recupere"
+                ? '<span class="badge badge-ok">Récupéré</span>'
+                : `<button class="btn btn-sm btn-ghost" onclick="marquerRecupere(${u.id})">Marquer récupéré</button>`
+            }</td>
+            <td>${actionButtons("usinage", u.id)}</td>
+          </tr>`
+        )
+        .join("");
+
+      document.getElementById("tableAvancesBody").innerHTML = state.avances
+        .map(
+          (a) => `<tr>
+            <td>${a.date || todayStr()}</td>
+            <td>${a.clientNom}</td>
+            <td><strong>${formatFC(a.montantFc)}</strong></td>
+            <td>${a.motif || ""}</td>
+            <td>${actionButtons("avance", a.id)}</td>
+          </tr>`
+        )
+        .join("");
+
+      document.getElementById("tableAchatsBody").innerHTML = state.achats
+        .map(
+          (a) => `<tr>
+            <td>${a.clientNom}</td>
+            <td>${a.poidsKg} kg</td>
+            <td>${formatFC(a.brutFc)}</td>
+            <td>${formatFC(a.deduitFc)}</td>
+            <td><strong>${formatFC(a.netFc)}</strong></td>
+            <td>${actionButtons("achat", a.id)}</td>
+          </tr>`
+        )
+        .join("");
+
+      if (venProduitEl && venProduitEl.options.length >= 6) {
+        venProduitEl.options[0].dataset.prix = state.parametres.riz_25;
+        venProduitEl.options[0].textContent = `LOSO YA KILO — Sac 25 kg (${formatFC(state.parametres.riz_25)})`;
+        venProduitEl.options[1].dataset.prix = state.parametres.riz_50;
+        venProduitEl.options[1].textContent = `LOSO YA KILO — Sac 50 kg (${formatFC(state.parametres.riz_50)})`;
+        venProduitEl.options[2].dataset.prix = state.parametres.mais_25;
+        venProduitEl.options[2].textContent = `Farine de maïs — Sac 25 kg (${formatFC(state.parametres.mais_25)})`;
+        venProduitEl.options[3].dataset.prix = state.parametres.mais_50;
+        venProduitEl.options[3].textContent = `Farine de maïs — Sac 50 kg (${formatFC(state.parametres.mais_50)})`;
+        venProduitEl.options[4].dataset.prix = state.parametres.son_riz_sac || 0;
+        venProduitEl.options[4].textContent = `Son de riz — Sac plein (100/120 kg env.) (${formatFC(state.parametres.son_riz_sac || 0)}/sac)`;
+        venProduitEl.options[5].dataset.prix = state.parametres.son_mais_kg || 0;
+        venProduitEl.options[5].textContent = `Son de maïs — Au kilo (${formatFC(state.parametres.son_mais_kg || 0)}/kg)`;
+        syncVenteForm(true);
+      }
+
+      const filtreVente = document.getElementById("filtreVenteStatut").value;
+      const ventesFiltered = state.ventes.filter((v) => {
+        const reste = Math.max(0, Number(v.totalFc || 0) - Number(v.payeFc ?? v.totalFc));
+        if (filtreVente === "credit") return reste > 0;
+        if (filtreVente === "paye") return reste <= 0;
+        return true;
+      });
+
+      document.getElementById("tableVentesBody").innerHTML = ventesFiltered
+        .map((v) => {
+          const paye = Number(v.payeFc ?? v.totalFc);
+          const reste = Math.max(0, Number(v.totalFc || 0) - paye);
+          const badgePaiement = reste > 0
+            ? `<span class="badge badge-warn">À payer plus tard</span>`
+            : `<span class="badge badge-ok">Payé</span>`;
+          const btnEncaisser = reste > 0
+            ? `<button type="button" class="btn btn-sm btn-pay" onclick="ouvrirEncaissementVente(${v.id})">Encaisser</button>`
+            : "";
+
+          return `<tr>
+            <td><strong>${v.client}</strong><br><small style="color:var(--texte-doux);">${v.date || todayStr()}</small></td>
+            <td>${v.produitNom}<br><small>${v.qteLabel || v.qte} (${v.poidsKg} kg)</small></td>
+            <td>
+              <strong>${formatFC(v.totalFc)}</strong>
+              ${reste > 0 ? `<br><small style="color:var(--alerte); font-weight:700;">Reste : ${formatFC(reste)}</small>` : ""}
+            </td>
+            <td>${badgePaiement}</td>
+            <td>${actionButtons("vente", v.id, btnEncaisser)}</td>
+          </tr>`;
+        })
+        .join("");
+
+      const statutsCmd = ["Nouvelle commande", "Confirmée", "En préparation", "En livraison", "Livrée", "Annulée"];
+      document.getElementById("tableCommandesBody").innerHTML = state.commandes
+        .map(
+          (c) => `<tr>
+            <td><strong>${c.numero}</strong></td>
+            <td>${c.client}</td>
+            <td>${c.detail}</td>
+            <td><strong>${formatFC(c.totalFc)}</strong></td>
+            <td>
+              <select onchange="changerStatutCommande(${c.id}, this.value)">
+                ${statutsCmd.map((s) => `<option value="${s}" ${c.statut === s ? "selected" : ""}>${s}</option>`).join("")}
+              </select>
+            </td>
+            <td>${actionButtons("commande", c.id)}</td>
+          </tr>`
+        )
+        .join("");
+
+      document.getElementById("tableCaisseBody").innerHTML = state.caisse
+        .map(
+          (m) => `<tr>
+            <td>${m.sens === "recette" ? '<span class="badge badge-ok">Recette</span>' : '<span class="badge badge-err">Dépense</span>'}</td>
+            <td>${m.libelle}</td>
+            <td>${m.mode}</td>
+            <td><strong>${formatFC(m.montantFc)}</strong></td>
+            <td>${actionButtons("caisse", m.id)}</td>
+          </tr>`
+        )
+        .join("");
+
+      document.getElementById("tableTiersBody").innerHTML = state.tiers
+        .map(
+          (t) => `<tr>
+            <td><strong>${t.nom}</strong></td>
+            <td>${t.tel}</td>
+            <td>${t.adresse}</td>
+            <td><strong>${formatFC(t.avanceDue)}</strong></td>
+            <td>${actionButtons("tiers", t.id)}</td>
+          </tr>`
+        )
+        .join("");
+
+      document.getElementById("achPrixKg").value = state.parametres.achat_riz_kg;
+      document.getElementById("paramRiz25").value = state.parametres.riz_25;
+      document.getElementById("paramRiz50").value = state.parametres.riz_50;
+      document.getElementById("paramMais25").value = state.parametres.mais_25;
+      document.getElementById("paramMais50").value = state.parametres.mais_50;
+      document.getElementById("paramSonRizSac").value = state.parametres.son_riz_sac || 0;
+      document.getElementById("paramSonMaisKg").value = state.parametres.son_mais_kg || 0;
+      document.getElementById("paramAchatRizKg").value = state.parametres.achat_riz_kg;
+      document.getElementById("paramManiocStatut").value = state.parametres.manioc_statut;
+      document.getElementById("paramTelephone").value = state.parametres.telephone;
+      document.getElementById("paramLivraison").value = state.parametres.livraison;
+
+      document.getElementById("tableUtilisateursBody").innerHTML = state.utilisateurs
+        .map(
+          (u) => `<tr>
+            <td><strong>${u.nom}</strong></td>
+            <td>${u.tel}${u.email ? "<br><small>" + u.email + "</small>" : ""}</td>
+            <td><span class="badge badge-warn">${ROLE_LABELS[u.role] || u.role}</span></td>
+            <td>${u.actif ? '<span class="badge badge-ok">Actif</span>' : '<span class="badge badge-err">Désactivé</span>'}</td>
+            <td>${actionButtons("utilisateur", u.id)}</td>
+          </tr>`
+        )
+        .join("");
+
+      updateAchatPreview();
+    }
+
+    document.getElementById("formMouvementStock").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const { s25, s50, kgLibres } = calculerTotalStockForm();
+      const sens = document.getElementById("stkSens").value;
+      const article = document.getElementById("stkArticle").value;
+      const kg = Number(stkKgEl.value);
+      const sacsPleins = article === "son_riz" ? Number(document.getElementById("stkSacsPleins").value || 0) : 0;
+      const motif = document.getElementById("stkMotifType").value;
+      const date = document.getElementById("stkDate").value || todayStr();
+      const noteSaisie = document.getElementById("stkNote").value.trim();
+
+      const detailsSacs = [];
+      if (s25 > 0) detailsSacs.push(`${s25}×25kg`);
+      if (s50 > 0) detailsSacs.push(`${s50}×50kg`);
+      if (kgLibres > 0 && (s25 > 0 || s50 > 0)) detailsSacs.push(`${kgLibres}kg`);
+      const resumeSacs = detailsSacs.length ? `[${detailsSacs.join(" + ")}]` : "";
+      const note = [resumeSacs, noteSaisie].filter(Boolean).join(" ").trim();
+
+      if (kg <= 0) {
+        showToast("Veuillez saisir un poids valide en kg.");
+        return;
+      }
+
+      const dispo = Number(state.stocks[article] || 0);
+      if (sens === "sortie" && dispo < kg) {
+        showToast(`Stock insuffisant (${dispo} kg disponibles pour cet article).`);
+        return;
+      }
+
+      if (sens === "entree") {
+        state.stocks[article] = dispo + kg;
+        if (article === "son_riz") {
+          state.stocks.son_riz_sacs_pleins = Number(state.stocks.son_riz_sacs_pleins || 0) + sacsPleins;
+        }
+      } else {
+        state.stocks[article] = dispo - kg;
+        if (article === "son_riz") {
+          state.stocks.son_riz_sacs_pleins = Math.max(0, Number(state.stocks.son_riz_sacs_pleins || 0) - sacsPleins);
+        }
+      }
+
+      logStockMove({ date, sens, article, kg, sacsPleins, motif, note });
+      stkSacs25El.value = 0;
+      stkSacs50El.value = 0;
+      stkKgLibresEl.value = 0;
+      stkKgEl.value = 0;
+      document.getElementById("stkNote").value = "";
+      calculerTotalStockForm();
+      saveState();
+      renderAll();
+      showToast(sens === "entree" ? "Entrée de stock enregistrée." : "Sortie de stock enregistrée.");
+    });
+
+    document.getElementById("formProduction").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const type = document.getElementById("prodType").value;
+      const brutKg = Number(document.getElementById("prodBrut").value);
+      const finiKg = Number(document.getElementById("prodFini").value);
+      const sacs25 = Number(document.getElementById("prodSacs25").value || 0);
+      const sacs50 = Number(document.getElementById("prodSacs50").value || 0);
+      const sonKg = Number(document.getElementById("prodSon").value || 0);
+      const sonSacsPleins = type === "riz" ? Number(document.getElementById("prodSonSacsPleins").value || 0) : 0;
+      const coutFc = Number(document.getElementById("prodCout").value || 0);
+
+      if (type === "riz") {
+        state.stocks.riz_fini += finiKg;
+        state.stocks.son_riz += sonKg;
+        state.stocks.son_riz_sacs_pleins = (state.stocks.son_riz_sacs_pleins || 0) + sonSacsPleins;
+        logStockMove({ sens: "entree", article: "riz_fini", kg: finiKg, motif: "Entrée production", note: "Production propre (riz)" });
+        if (sonKg > 0) {
+          logStockMove({ sens: "entree", article: "son_riz", kg: sonKg, sacsPleins: sonSacsPleins, motif: "Entrée production", note: "Sous-produit riz" });
+        }
+      } else {
+        state.stocks.farine_mais += finiKg;
+        state.stocks.son_mais += sonKg;
+        logStockMove({ sens: "entree", article: "farine_mais", kg: finiKg, motif: "Entrée production", note: "Production propre (maïs)" });
+        if (sonKg > 0) {
+          logStockMove({ sens: "entree", article: "son_mais", kg: sonKg, motif: "Entrée production", note: "Sous-produit maïs" });
+        }
+      }
+
+      state.productions.unshift({ id: nextId(state.productions), date: todayStr(), type, brutKg, finiKg, sacs25, sacs50, sonKg, sonSacsPleins, coutFc });
+      if (coutFc > 0) {
+        state.caisse.unshift({ id: nextId(state.caisse), date: todayStr(), sens: "depense", libelle: `Production propre (${type})`, mode: "Espèces", montantFc: coutFc });
+      }
+      saveState();
+      renderAll();
+      showToast("Production enregistrée et ajoutée au stock commercial.");
+    });
+
+    document.getElementById("formUsinage").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const client = getOrCreateTiersByName(document.getElementById("usiClient").value, false);
+      if (!client) {
+        showToast("Veuillez saisir le nom du client.");
+        return;
+      }
+      const type = document.getElementById("usiType").value;
+      const brutKg = Number(document.getElementById("usiBrut").value);
+      const finiKg = Number(document.getElementById("usiFini").value);
+      const fraisFc = Number(document.getElementById("usiFrais").value);
+      const payeFc = Number(document.getElementById("usiPaye").value);
+      const statutRetrait = document.getElementById("usiRetrait").value;
+
+      if (statutRetrait === "recupere" && payeFc < fraisFc) {
+        alert("Le client doit solder les frais d'usinage avant de récupérer son produit.");
+        return;
+      }
+
+      state.usinages.unshift({
+        id: nextId(state.usinages),
+        date: todayStr(),
+        clientId: client.id,
+        clientNom: client.nom,
+        type,
+        brutKg,
+        finiKg,
+        fraisFc,
+        payeFc,
+        statutRetrait,
+      });
+
+      if (payeFc > 0) {
+        state.caisse.unshift({ id: nextId(state.caisse), date: todayStr(), sens: "recette", libelle: `Frais usinage — ${client.nom}`, mode: "Espèces", montantFc: payeFc });
+      }
+      document.getElementById("usiClient").value = "";
+      saveState();
+      renderAll();
+      showToast("Usinage client enregistré (produit séparé du stock commercial).");
+    });
+
+    function marquerRecupere(id) {
+      const u = state.usinages.find((x) => x.id === id);
+      if (!u) return;
+      if (u.payeFc < u.fraisFc) {
+        alert("Impossible : les frais d'usinage ne sont pas encore soldés.");
+        return;
+      }
+      u.statutRetrait = "recupere";
+      saveState();
+      renderAll();
+      showToast("Retrait client confirmé.");
+    }
+
+    document.getElementById("formAvance").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const client = getOrCreateTiersByName(document.getElementById("avaClient").value, false);
+      const montant = Number(document.getElementById("avaMontant").value);
+      const motif = document.getElementById("avaNote").value.trim() || "Avance sur riz";
+      if (!client || montant <= 0) {
+        showToast("Veuillez saisir un nom et un montant valide.");
+        return;
+      }
+
+      client.avanceDue += montant;
+      state.avances.unshift({
+        id: nextId(state.avances),
+        date: todayStr(),
+        clientId: client.id,
+        clientNom: client.nom,
+        montantFc: montant,
+        motif,
+      });
+      state.caisse.unshift({ id: nextId(state.caisse), date: todayStr(), sens: "depense", libelle: `Avance accordée à ${client.nom}`, mode: "Espèces", montantFc: montant });
+      document.getElementById("avaClient").value = "";
+      saveState();
+      renderAll();
+      showToast("Avance enregistrée et sortie de caisse comptabilisée.");
+    });
+
+    function updateAchatPreview() {
+      const nomSaisi = document.getElementById("achClient").value.trim().toLowerCase();
+      const client = state.tiers.find((t) => t.nom.trim().toLowerCase() === nomSaisi);
+      const poids = Number(document.getElementById("achPoids").value || 0);
+      const prixKg = Number(document.getElementById("achPrixKg").value || 0);
+      const brut = poids * prixKg;
+      const deduit = Math.min(brut, client ? Number(client.avanceDue) : 0);
+      const net = Math.max(0, brut - deduit);
+      document.getElementById("achatPreview").innerHTML =
+        `Brut : <strong>${formatFC(brut)}</strong> | Avances déduites : <strong>${formatFC(deduit)}</strong> | Net à payer : <strong>${formatFC(net)}</strong>`;
+    }
+
+    ["achClient", "achPoids", "achPrixKg"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", updateAchatPreview);
+      document.getElementById(id).addEventListener("change", updateAchatPreview);
+    });
+
+    document.getElementById("formAchatRiz").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const client = getOrCreateTiersByName(document.getElementById("achClient").value, false);
+      const poidsKg = Number(document.getElementById("achPoids").value);
+      const prixKg = Number(document.getElementById("achPrixKg").value);
+      if (!client || poidsKg <= 0) {
+        showToast("Veuillez saisir un vendeur et un poids valide.");
+        return;
+      }
+
+      const brutFc = poidsKg * prixKg;
+      const deduitFc = Math.min(brutFc, Number(client.avanceDue));
+      const netFc = Math.max(0, brutFc - deduitFc);
+
+      client.avanceDue -= deduitFc;
+      state.stocks.riz_fini += poidsKg;
+      logStockMove({ sens: "entree", article: "riz_fini", kg: poidsKg, motif: "Approvisionnement / Réception", note: `Achat riz fini — ${client.nom}` });
+      state.achats.unshift({
+        id: nextId(state.achats),
+        date: todayStr(),
+        clientId: client.id,
+        clientNom: client.nom,
+        poidsKg,
+        prixKg,
+        brutFc,
+        deduitFc,
+        netFc,
+      });
+
+      if (netFc > 0) {
+        state.caisse.unshift({ id: nextId(state.caisse), date: todayStr(), sens: "depense", libelle: `Achat riz net — ${client.nom}`, mode: "Espèces", montantFc: netFc });
+      }
+      document.getElementById("achClient").value = "";
+      saveState();
+      renderAll();
+      showToast("Achat de riz enregistré avec déduction automatique des avances.");
+    });
+
+    document.getElementById("formVente").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const opt = venProduitEl.options[venProduitEl.selectedIndex];
+      const codeProduit = opt.value;
+      const unite = opt.dataset.unite || "sac";
+      const article = opt.dataset.article;
+      const qte = Number(venQteEl.value);
+      const prixUnit = Number(venPrixUnitEl.value);
+      const statutPaiement = venStatutPaiementEl.value;
+      const mode = document.getElementById("venMode").value;
+      const client = document.getElementById("venClient").value.trim();
+
+      const poidsTotal = unite === "sac_plein"
+        ? Number(venPoidsReelEl.value || 0)
+        : (unite === "kg" ? qte : qte * Number(opt.dataset.kg || 25));
+
+      if (poidsTotal <= 0) {
+        showToast("Veuillez indiquer un poids valide.");
+        return;
+      }
+
+      if (state.stocks[article] < poidsTotal) {
+        showToast(`Stock insuffisant (${state.stocks[article]} kg disponibles).`);
+        return;
+      }
+
+      const totalFc = prixUnit * qte;
+      const payeFc = statutPaiement === "credit" ? 0 : totalFc;
+      const sacsPleinsSortis = unite === "sac_plein" ? Math.floor(qte) : 0;
+      state.stocks[article] -= poidsTotal;
+      if (unite === "sac_plein") {
+        state.stocks.son_riz_sacs_pleins = Math.max(0, (state.stocks.son_riz_sacs_pleins || 0) - sacsPleinsSortis);
+      }
+      logStockMove({
+        sens: "sortie",
+        article,
+        kg: poidsTotal,
+        sacsPleins: sacsPleinsSortis,
+        motif: "Sortie vente / livraison",
+        note: `Vente ${statutPaiement === "credit" ? "(à payer plus tard)" : ""} — ${client}`,
+      });
+
+      const qteLabel = unite === "kg"
+        ? `${qte} kg`
+        : (unite === "sac_plein" ? `${qte} sac(s) plein(s)` : `${qte} sac(s)`);
+
+      state.ventes.unshift({
+        id: nextId(state.ventes),
+        date: todayStr(),
+        client,
+        codeProduit,
+        articleKey: article,
+        produitNom: opt.textContent.split(" (")[0],
+        qteLabel,
+        qte,
+        sacsPleins: sacsPleinsSortis,
+        poidsKg: poidsTotal,
+        totalFc,
+        payeFc,
+        statutPaiement,
+        mode,
+      });
+
+      if (payeFc > 0) {
+        state.caisse.unshift({ id: nextId(state.caisse), date: todayStr(), sens: "recette", libelle: `Vente — ${client}`, mode, montantFc: payeFc });
+      }
+      saveState();
+      renderAll();
+      showToast(
+        statutPaiement === "credit"
+          ? "Vente enregistrée à payer plus tard : stock déduit, en attente de paiement."
+          : "Vente enregistrée : stock déduit et recette ajoutée à la caisse."
+      );
+    });
+
+    function changerStatutCommande(id, statut) {
+      const cmd = state.commandes.find((c) => c.id === id);
+      if (!cmd) return;
+      cmd.statut = statut;
+      saveState();
+      renderAll();
+      showToast(`Statut de ${cmd.numero} mis à jour : ${statut}`);
+    }
+
+    document.getElementById("formDepense").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const cat = document.getElementById("depCat").value;
+      const montant = Number(document.getElementById("depMontant").value);
+      const mode = document.getElementById("depMode").value;
+      const desc = document.getElementById("depDesc").value.trim();
+
+      state.caisse.unshift({ id: nextId(state.caisse), date: todayStr(), sens: "depense", libelle: `${cat} — ${desc}`, mode, montantFc: montant });
+      document.getElementById("depDesc").value = "";
+      saveState();
+      renderAll();
+      showToast("Dépense enregistrée et déduite de la caisse.");
+    });
+
+    document.getElementById("formTiers").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nom = document.getElementById("tiersNom").value.trim();
+      const tel = document.getElementById("tiersTel").value.trim();
+      const adresse = document.getElementById("tiersAdresse").value.trim();
+      state.tiers.push({ id: nextId(state.tiers), nom, tel, adresse, avanceDue: 0 });
+      e.target.reset();
+      saveState();
+      renderAll();
+      showToast("Contact client/fournisseur ajouté.");
+    });
+
+    document.getElementById("formUtilisateur").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!currentUser || !getPermissions(currentUser.role).tabs.includes("parametres")) {
+        showToast("Action réservée au propriétaire ou technicien.");
+        return;
+      }
+      const nom = document.getElementById("userNom").value.trim();
+      const tel = document.getElementById("userTel").value.trim();
+      const email = document.getElementById("userEmail").value.trim();
+      const role = document.getElementById("userRole").value;
+      const pass = document.getElementById("userPass").value;
+
+      if (pass.length < 6) {
+        alert("Le mot de passe doit contenir au moins 6 caractères.");
+        return;
+      }
+
+      if (state.utilisateurs.some((u) => normalizePhone(u.tel) === normalizePhone(tel))) {
+        alert("Un compte utilise déjà ce numéro de téléphone.");
+        return;
+      }
+
+      state.utilisateurs.push({
+        id: nextId(state.utilisateurs),
+        nom,
+        tel,
+        email,
+        password: hashPass(pass),
+        role,
+        actif: true,
+      });
+
+      e.target.reset();
+      saveState();
+      renderAll();
+      showToast(`Compte créé pour ${nom} (${ROLE_LABELS[role] || role}).`);
+    });
+
+    document.getElementById("formParametresSite").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!currentUser || !getPermissions(currentUser.role).tabs.includes("parametres")) {
+        showToast("Action réservée au propriétaire ou technicien.");
+        return;
+      }
+      state.parametres.riz_25 = Number(document.getElementById("paramRiz25").value);
+      state.parametres.riz_50 = Number(document.getElementById("paramRiz50").value);
+      state.parametres.mais_25 = Number(document.getElementById("paramMais25").value);
+      state.parametres.mais_50 = Number(document.getElementById("paramMais50").value);
+      state.parametres.son_riz_sac = Number(document.getElementById("paramSonRizSac").value || 0);
+      state.parametres.son_mais_kg = Number(document.getElementById("paramSonMaisKg").value || 0);
+      state.parametres.achat_riz_kg = Number(document.getElementById("paramAchatRizKg").value);
+      state.parametres.manioc_statut = document.getElementById("paramManiocStatut").value;
+      state.parametres.telephone = document.getElementById("paramTelephone").value.trim();
+      state.parametres.livraison = document.getElementById("paramLivraison").value;
+
+      saveState();
+      renderAll();
+      showToast("Paramètres du site et tarifs enregistrés.");
+    });
+
+    calculerTotalStockForm();
+    currentUser = getSessionUser();
+    applyAuthUI();
+  </script>
+</body>
+</html>
