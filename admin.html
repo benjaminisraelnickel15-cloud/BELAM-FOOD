@@ -2836,23 +2836,33 @@
         return true;
       });
 
-      document.getElementById("tableVentesBody").innerHTML = ventesFiltered
+     document.getElementById("tableVentesBody").innerHTML = ventesFiltered
         .map((v) => {
-          const paye = Number(v.payeFc ?? v.totalFc);
-          const reste = Math.max(0, Number(v.totalFc || 0) - paye);
+          const total = Number(v.totalFc) || 0;
+          const payeBrut = v.payeFc !== undefined && v.payeFc !== null && v.payeFc !== ""
+            ? Number(v.payeFc)
+            : total;
+          const paye = Number.isNaN(payeBrut) ? total : Math.min(total, Math.max(0, payeBrut));
+          const reste = Math.max(0, total - paye);
+
           const badgePaiement = reste > 0
-            ? `<span class="badge badge-warn">À payer plus tard</span>`
+            ? `<span class="badge badge-warn">Avance / Reste</span>`
             : `<span class="badge badge-ok">Payé</span>`;
+
           const btnEncaisser = reste > 0
             ? `<button type="button" class="btn btn-sm btn-pay" onclick="ouvrirEncaissementVente(${v.id})">Encaisser</button>`
             : "";
+
+          const detailsMontants = reste > 0
+            ? `<br><small style="color:var(--texte-doux);">Avance : ${formatFC(paye)}</small><br><small style="color:var(--alerte); font-weight:700;">Reste : ${formatFC(reste)}</small>`
+            : `<br><small style="color:var(--texte-doux);">Payé : ${formatFC(paye)}</small>`;
 
           return `<tr>
             <td><strong>${v.client}</strong><br><small style="color:var(--texte-doux);">${v.date || todayStr()}</small></td>
             <td>${v.produitNom}<br><small>${v.qteLabel || v.qte} (${v.poidsKg} kg)</small></td>
             <td>
-              <strong>${formatFC(v.totalFc)}</strong>
-              ${reste > 0 ? `<br><small style="color:var(--alerte); font-weight:700;">Reste : ${formatFC(reste)}</small>` : ""}
+              <strong>${formatFC(total)}</strong>
+              ${detailsMontants}
             </td>
             <td>${badgePaiement}</td>
             <td>${actionButtons("vente", v.id, btnEncaisser)}</td>
@@ -2877,7 +2887,6 @@
           </tr>`
         )
         .join("");
-
       document.getElementById("tableCaisseBody").innerHTML = state.caisse
         .map(
           (m) => `<tr>
@@ -3328,33 +3337,9 @@
     currentUser = getSessionUser();
     applyAuthUI();
   </script>
-  <script>
-  (function () {
-    const cibleDomaine = /belamfood\.(cd|com|org|africa|xyz|shop)/i;
-
-    // 1. Corrige les liens <a> qui pointent vers belamfood.cd
-    document.addEventListener("click", function (event) {
-      const lien = event.target.closest("a");
-      if (!lien) return;
-      const href = lien.getAttribute("href") || "";
-      if (cibleDomaine.test(href)) {
-        event.preventDefault();
-        window.location.href = "./index.html";
-      }
-    });
-
-    // 2. Intercepte les assignations directes vers belamfood.cd si possible
-    const originalAssign = window.location.assign.bind(window.location);
-    window.location.assign = function (url) {
-      if (typeof url === "string" && cibleDomaine.test(url)) {
-        return originalAssign("./index.html");
-      }
-      return originalAssign(url);
-    };
-  })();
-</script>
 <style>
   #belam-avances-btn {
+    display: none;
     position: fixed;
     bottom: 18px;
     right: 18px;
@@ -3506,6 +3491,38 @@
 
     if (!btnOuvrir || !modal) return;
 
+    function estVisible(el) {
+      if (!el) return false;
+      const style = window.getComputedStyle(el);
+      if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity) === 0) {
+        return false;
+      }
+      return el.offsetParent !== null;
+    }
+
+    function synchroniserVisibiliteBouton() {
+      const textePage = document.body ? document.body.innerText || "" : "";
+      const ecranConnexion = /connexion\s+administration/i.test(textePage);
+      const tableVentes = document.getElementById("tableVentesBody");
+      const blocVenteDirecte =
+        document.getElementById("vente-directe") ||
+        document.getElementById("section-vente-directe") ||
+        document.querySelector("[data-section='vente-directe']") ||
+        (tableVentes ? tableVentes.closest("section, .tab-pane, .panel, .card, div") : null);
+
+      const surVenteDirecte =
+        !ecranConnexion &&
+        ((blocVenteDirecte && estVisible(blocVenteDirecte)) ||
+          (tableVentes && estVisible(tableVentes)) ||
+          /vente\s*directe/i.test(textePage));
+
+      btnOuvrir.style.display = surVenteDirecte ? "inline-block" : "none";
+      if (!surVenteDirecte) {
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+      }
+    }
+
     function chargerVentes() {
       try {
         const brut = localStorage.getItem(CLE_STORAGE);
@@ -3630,6 +3647,20 @@
       mettreAJourApercu();
       afficherVentes();
     });
+
+    const observateur = new MutationObserver(synchroniserVisibiliteBouton);
+    observateur.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["style", "class", "hidden"]
+    });
+    window.addEventListener("hashchange", synchroniserVisibiliteBouton);
+    window.addEventListener("popstate", synchroniserVisibiliteBouton);
+    document.addEventListener("click", function () {
+      setTimeout(synchroniserVisibiliteBouton, 60);
+    });
+    synchroniserVisibiliteBouton();
   })();
 </script>
 </body>
